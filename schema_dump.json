@@ -1,0 +1,137 @@
+{
+  "users": {
+    "id": {
+      "default": "extensions.uuid_generate_v4()",
+      "description": "Note:\nThis is a Primary Key.<pk/>",
+      "format": "uuid",
+      "type": "string"
+    },
+    "email": {
+      "format": "text",
+      "type": "string"
+    },
+    "password_hash": {
+      "format": "text",
+      "type": "string"
+    },
+    "full_name": {
+      "format": "text",
+      "type": "string"
+    },
+    "role": {
+      "format": "text",
+      "type": "string"
+    },
+    "domain": {
+      "default": "janmasethu",
+      "format": "text",
+      "type": "string"
+    },
+    "is_active": {
+      "default": true,
+      "format": "boolean",
+      "type": "boolean"
+    },
+    "created_at": {
+      "default": "now()",
+      "format": "timestamp with time zone",
+      "type": "string"
+    },
+    "updated_at": {
+      "default": "now()",
+      "format": "timestamp with time zone",
+      "type": "string"
+    }
+  },
+  "threads": {
+    "id": {
+      "default": "extensions.uuid_generate_v4()",
+      "description": "Note:\nThis is a Primary Key.<pk/>",
+      "format": "uuid",
+      "type": "string"
+    },
+    "domain": {
+      "format": "text",
+      "type": "string"
+    },
+    "user_id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "channel": {
+      "format": "text",
+      "type": "string"
+    },
+    "status": {
+      "default": "green",
+      "format": "text",
+      "type": "string"
+    },
+    "ownership": {
+      "default": "AI",
+      "format": "text",
+      "type": "string"
+    },
+    "assigned_role": {
+      "format": "text",
+      "type": "string"
+    },
+    "assigned_user_id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "is_locked": {
+      "default": false,
+      "format": "boolean",
+      "type": "boolean"
+    },
+    "version": {
+      "default": 1,
+      "format": "integer",
+      "type": "integer"
+    },
+    "created_at": {
+      "default": "now()",
+      "format": "timestamp with time zone",
+      "type": "string"
+    },
+    "updated_at": {
+      "default": "now()",
+      "format": "timestamp with time zone",
+      "type": "string"
+    },
+    "metadata": {
+      "format": "jsonb"
+    }
+  },
+  "messages": {
+    "id": {
+      "default": "extensions.uuid_generate_v4()",
+      "description": "Note:\nThis is a Primary Key.<pk/>",
+      "format": "uuid",
+      "type": "string"
+    },
+    "thread_id": {
+      "description": "Note:\nThis is a Foreign Key to `conversation_threads.id`.<fk table='conversation_threads' column='id'/>",
+      "format": "uuid",
+      "type": "string"
+    },
+    "sender_id": {
+      "format": "text",
+      "type": "string"
+    },
+    "sender_type": {
+      "format": "text",
+      "type": "string"
+    },
+    "content": {
+      "format": "text",
+      "type": "string"
+    },
+    "created_at": {
+      "default": "now()",
+      "format": "timestamp with time zone",
+      "type": "string"
+    }
+  }
+}
