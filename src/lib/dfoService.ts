@@ -1,110 +1,56 @@
 import { supabase } from './supabase';
 
-// Mock Patient Message Injector (The "Risk Engine" simulation)
-export const simulateIncomingPatientMessage = async (patientName: string, text: string, riskLevel: 'green' | 'yellow' | 'red') => {
-  const sentimentScore = riskLevel === 'red' ? -0.85 : riskLevel === 'yellow' ? -0.35 : 0.75;
-  
-  // 1. Create a thread with the strict schema
-  const { data: thread, error: threadErr } = await supabase
-    .from('threads')
-    .insert([
-      {
-        patient_name: patientName,
-        last_message: text,
-        risk_level: riskLevel,
-        sentiment_score: sentimentScore,
-        status: 'open',
-        created_at: new Date().toISOString()
-      }
-    ])
-    .select()
-    .single();
+/**
+ * PRODUCTION CLINICAL SERVICE
+ * Aligned strictly with the SQL Schema: 
+ * - conversation_threads (status: green | yellow | red)
+ * - conversation_messages (content)
+ */
 
-  if (threadErr || !thread) {
-    console.error("Simulation error logging thread", threadErr);
-    return;
-  }
-
-  // 2. Insert the patient message
-  await supabase
-    .from('messages')
-    .insert([
-      {
-        thread_id: thread.id,
-        sender_type: 'patient',
-        message: text
-      }
-    ]);
-    
-  // 3. Create SLA Tracking record
-  // Red = 5 mins, Yellow = 15 mins, Green = 60 mins
-  const slaMinutes = riskLevel === 'red' ? 5 : riskLevel === 'yellow' ? 15 : 60;
-  const deadline = new Date();
-  deadline.setMinutes(deadline.getMinutes() + slaMinutes);
-
-  await supabase
-    .from('sla_tracking')
-    .insert([
-      {
-        thread_id: thread.id,
-        response_deadline: deadline.toISOString(),
-        status: 'pending'
-      }
-    ]);
-
-  // 4. Automated AI Acknowledgement
-  await supabase
-    .from('messages')
-    .insert([
-      {
-        thread_id: thread.id,
-        sender_type: 'ai',
-        message: "JanmaSethu Sakhi: Your concern has been triaged. A clinical specialist will be with you shortly. (SLA: " + slaMinutes + "m)"
-      }
-    ]);
-};
-
-// Send a clinical message
-export const sendClinicalMessage = async (threadId: string, role: string, _userId: string, message: string) => {
+// Send a clinical message from Doctor/Nurse/CRO
+export const sendClinicalMessage = async (threadId: string, role: string, userId: string, content: string) => {
   const { error } = await supabase
-    .from('messages')
+    .from('conversation_messages')
     .insert([
       {
         thread_id: threadId,
+        sender_id: userId,
         sender_type: role,
-        message: message
+        content: content,
+        created_at: new Date().toISOString()
       }
     ]);
     
   if (error) throw error;
   
-  // Update last message on thread
+  // Update the thread's last updated timestamp
   await supabase
-    .from('threads')
+    .from('conversation_threads')
     .update({ 
-      last_message: '(Clinician) ' + message
+      updated_at: new Date().toISOString()
     })
     .eq('id', threadId);
 
-  // Mark SLA as completed if this is the first response
+  // Mark analytics / SLA as met if first response
   await supabase
-    .from('sla_tracking')
+    .from('janmasethu_analytics')
     .update({ 
-      status: 'completed',
-      responded_at: new Date().toISOString()
+      sla_met: true,
+      first_reply_at: new Date().toISOString()
     })
     .eq('thread_id', threadId)
-    .eq('status', 'pending');
+    .is('first_reply_at', null);
 };
 
 // Takeover / Assignment logic
-export const assignThread = async (threadId: string, role: 'nurse' | 'doctor', userId: string) => {
+export const assignThread = async (threadId: string, role: 'Nurse' | 'Doctor', userId: string) => {
   const { error } = await supabase
-    .from('threads')
+    .from('conversation_threads')
     .update({ 
-      assigned_to: userId,
+      assigned_user_id: userId,
       assigned_role: role,
-      status: 'assigned'
+      ownership: 'Human',
+      updated_at: new Date().toISOString()
     })
     .eq('id', threadId);
     
@@ -112,12 +58,48 @@ export const assignThread = async (threadId: string, role: 'nurse' | 'doctor', u
   
   // Log takeover in message history
   await supabase
-    .from('messages')
+    .from('conversation_messages')
     .insert([
       {
         thread_id: threadId,
+        sender_id: 'SYSTEM',
         sender_type: 'ai',
-        message: `SYSTEM ALERT: Thread assigned to ${role.toUpperCase()}. AI responses are now secondary to clinical control.`
+        content: `CLINICAL TAKEOVER: Thread assigned to ${role.toUpperCase()}. AI responses are now secondary to direct human clinical control.`
       }
     ]);
+};
+
+// Diagnostic: Simulate Patient Incoming (Aligned with Production Schema)
+export const simulateIncomingPatientMessage = async (patientId: string, text: string, status: 'green' | 'yellow' | 'red' = 'green') => {
+  // 1. Create a thread
+  const { data: thread, error: threadErr } = await supabase
+    .from('conversation_threads')
+    .insert([
+      {
+        domain: 'janmasethu',
+        user_id: patientId,
+        channel: 'whatsapp',
+        status: status,
+        ownership: 'AI',
+        metadata: { last_message: text }
+      }
+    ])
+    .select()
+    .single();
+
+  if (threadErr || !thread) throw threadErr;
+
+  // 2. Insert the message
+  await supabase
+    .from('conversation_messages')
+    .insert([
+      {
+        thread_id: thread.id,
+        sender_id: patientId,
+        sender_type: 'patient',
+        content: text
+      }
+    ]);
+
+  return thread;
 };

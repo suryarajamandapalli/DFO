@@ -13,6 +13,7 @@ import { DoctorOnboarding } from './pages/onboarding/DoctorOnboarding';
 import { CroDashboard } from './pages/dashboard/CroDashboard';
 import { NurseDashboard } from './pages/dashboard/NurseDashboard';
 import { DoctorDashboard } from './pages/dashboard/DoctorDashboard';
+import { ClinicalOverview } from './pages/dashboard/ClinicalOverview';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 function App() {
@@ -45,7 +46,8 @@ function App() {
 
         {/* Protected Dashboard Routes (Role Specific) */}
         <Route element={<ProtectedRoute requireRole="cro" />}>
-          <Route path="/dashboard/cro" element={<CroDashboard />} />
+          <Route path="/dashboard/cro" element={<ClinicalOverview />} />
+          <Route path="/dashboard/cro/inbox" element={<CroDashboard />} />
         </Route>
         <Route element={<ProtectedRoute requireRole="nurse" />}>
           <Route path="/dashboard/nurse" element={<NurseDashboard />} />

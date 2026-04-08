@@ -10,7 +10,7 @@ import { HeartPulse, Activity } from 'lucide-react';
 import { sendClinicalMessage, assignThread } from '../../lib/dfoService';
 
 export function NurseDashboard() {
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -19,14 +19,14 @@ export function NurseDashboard() {
 
   // Fetch initial threads (Yellow or explicitly assigned to this nurse)
   useEffect(() => {
-    if (!user) return;
+    if (!profile) return;
     
     const fetchThreads = async () => {
       const { data } = await supabase
-        .from('threads')
+        .from('conversation_threads')
         .select('*')
-        .or(`risk_level.eq.yellow,assigned_to.eq.${user.id}`)
-        .order('created_at', { ascending: false });
+        .or(`status.eq.yellow,assigned_user_id.eq.${profile.id}`)
+        .order('updated_at', { ascending: false });
         
       if (data) setThreads(data as Thread[]);
     };
@@ -34,22 +34,25 @@ export function NurseDashboard() {
     fetchThreads();
 
     // Listen to realtime thread updates
-    const threadSub = supabase.channel('nurse-threads')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'threads' }, payload => {
+    const threadSub = supabase.channel('nurse-threads-prod')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'conversation_threads' }, payload => {
         const newThread = payload.new as Thread;
         // Only keep if yellow or assigned to them explicitly
-        if (newThread.risk_level === 'yellow' || newThread.assigned_to === user.id) {
+        if (newThread.status === 'yellow' || newThread.assigned_user_id === profile.id) {
           setThreads(current => {
             const exists = current.find(t => t.id === newThread.id);
             if (exists) return current.map(t => t.id === newThread.id ? newThread : t);
             return [newThread, ...current];
           });
+        } else {
+           // Remove if it's no longer their concern
+           setThreads(current => current.filter(t => t.id !== newThread.id));
         }
       })
       .subscribe();
 
     return () => { supabase.removeChannel(threadSub); };
-  }, [user]);
+  }, [profile]);
 
   // Fetch messages when a thread is selected
   useEffect(() => {
@@ -60,7 +63,7 @@ export function NurseDashboard() {
     
     const fetchMessages = async () => {
       const { data } = await supabase
-        .from('messages')
+        .from('conversation_messages')
         .select('*')
         .eq('thread_id', activeThreadId)
         .order('created_at', { ascending: true });
@@ -70,8 +73,8 @@ export function NurseDashboard() {
     
     fetchMessages();
 
-    const msgSub = supabase.channel(`messages-nurse-${activeThreadId}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `thread_id=eq.${activeThreadId}` }, payload => {
+    const msgSub = supabase.channel(`messages-nurse-prod-${activeThreadId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'conversation_messages', filter: `thread_id=eq.${activeThreadId}` }, payload => {
         setMessages(current => [...current, payload.new as Message]);
       })
       .subscribe();
@@ -81,7 +84,7 @@ export function NurseDashboard() {
 
   return (
     <DashboardLayout 
-      activeMenu="threads"
+      activeMenu="inbox"
       rightPanel={activeThread ? <ThreadInfoPanel thread={activeThread} /> : (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center opacity-30">
           <Activity className="w-12 h-12 mb-4" />
@@ -99,17 +102,25 @@ export function NurseDashboard() {
         />
         
         {activeThread ? (
-          <div className="flex-1 flex flex-col min-w-0 bg-white">
-            <div className="px-6 py-2 border-b border-slate-50 flex items-center justify-between bg-white z-10">
-               <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Clinical Session</span>
+          <div className="flex-1 flex flex-col min-w-0 bg-white shadow-2xl z-10">
+            <div className="px-6 py-3 border-b border-rose-50 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-20">
+               <div className="flex items-center gap-3">
+                  <div className="p-2 bg-rose-50 rounded-xl text-rose-500 shadow-sm border border-rose-100">
+                     <HeartPulse className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-rose-600 uppercase tracking-[0.2em] block leading-none mb-1">Nurse Triage Active</span>
+                    <div className="flex items-center gap-1.5">
+                       <span className="text-xs font-black text-slate-900">CASE: {activeThread.id.slice(0,8).toUpperCase()}</span>
+                    </div>
+                  </div>
                </div>
-               {!activeThread.assigned_to && (
+               {!activeThread.assigned_user_id && (
                  <button 
-                  onClick={() => assignThread(activeThread.id, 'nurse', user!.id)}
-                  className="flex items-center gap-2 text-[10px] font-black bg-amber-50 text-amber-600 px-3 py-1.5 rounded-lg border border-amber-100 hover:bg-amber-100 transition-colors uppercase tracking-wider"
+                  onClick={() => assignThread(activeThread.id, 'Nurse', profile!.id)}
+                  className="flex items-center gap-2 text-[10px] font-black bg-rose-600 text-white px-5 py-2.5 rounded-2xl border border-rose-700 hover:bg-rose-700 hover:scale-[1.02] transition-all uppercase tracking-widest shadow-lg shadow-rose-600/20"
                  >
-                   Claim Triage Thread
+                   Claim Case
                  </button>
                )}
             </div>
@@ -117,19 +128,19 @@ export function NurseDashboard() {
             <ChatWindow 
               thread={activeThread}
               messages={messages}
-              currentRole="nurse"
-              onSendMessage={(msg) => sendClinicalMessage(activeThread.id, 'nurse', user!.id, msg)}
-              onTakeover={() => assignThread(activeThread.id, 'nurse', user!.id)}
+              currentRole="Nurse"
+              onSendMessage={(msg) => sendClinicalMessage(activeThread.id, 'Nurse', profile!.id, msg)}
+              onTakeover={() => assignThread(activeThread.id, 'Nurse', profile!.id)}
             />
           </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center bg-slate-50/20 text-slate-400 p-12">
-             <div className="p-8 rounded-full bg-white shadow-sm border border-slate-100 mb-6 font-bold">
-                <HeartPulse className="w-12 h-12 text-rose-200" />
+             <div className="p-10 rounded-full bg-white shadow-premium mb-8">
+                <HeartPulse className="w-16 h-16 text-rose-100 animate-pulse" />
              </div>
-             <h2 className="text-xl font-black text-slate-800 tracking-tight mb-2">Triage Queue</h2>
-             <p className="text-sm font-medium text-slate-500 max-w-xs text-center leading-relaxed">
-                Routine maternal queries and yellow-risk threads require triage within 15 minutes.
+             <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-3">Nurse Triage Dashboard</h2>
+             <p className="text-sm font-bold text-slate-400/80 max-w-sm text-center leading-relaxed tracking-wide">
+                Routine maternal queries and moderate-risk updates appear here. Minimum SLA: 15 minutes.
              </p>
           </div>
         )}
@@ -137,4 +148,3 @@ export function NurseDashboard() {
     </DashboardLayout>
   );
 }
-

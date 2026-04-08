@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import type { Thread, UserProfile } from '../../lib/types';
+import type { Thread, UserProfile, PatientProfile } from '../../lib/types';
 import { 
-  User, 
   Clock, 
   MapPin, 
-  History, 
   ShieldCheck, 
   Calendar,
   Stethoscope,
   HeartPulse,
   Mail,
   Smartphone,
-  ExternalLink
+  Baby,
+  BrainCircuit,
+  Activity,
+  FileText
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { SLATimer } from './SLATimer';
 
 interface ThreadInfoPanelProps {
   thread: Thread;
@@ -23,10 +23,12 @@ interface ThreadInfoPanelProps {
 
 export function ThreadInfoPanel({ thread }: ThreadInfoPanelProps) {
   const [assignedStaff, setAssignedStaff] = useState<UserProfile | null>(null);
-  const [slaData, setSlaData] = useState<any>(null);
+  const [patientData, setPatientData] = useState<PatientProfile | null>(null);
+  const [riskReason, setRiskReason] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchDetails() {
+    async function fetchDeepIntel() {
+      // 1. Fetch Staff
       if (thread.assigned_to) {
         const { data } = await supabase
           .from('users')
@@ -38,15 +40,28 @@ export function ThreadInfoPanel({ thread }: ThreadInfoPanelProps) {
         setAssignedStaff(null);
       }
 
-      // Fetch SLA
-      const { data: sla } = await supabase
-        .from('sla_tracking')
-        .select('*')
+      // 2. Fetch Patient Profile
+      if (thread.patient_id || thread.patient_name) {
+        let query = supabase.from('dfo_patients').select('*');
+        if (thread.patient_id) query = query.eq('id', thread.patient_id);
+        else query = query.eq('full_name', thread.patient_name);
+        
+        const { data: patient } = await query.single();
+        if (patient) setPatientData(patient as PatientProfile);
+      }
+
+      // 3. Fetch Risk Reasoning (from dfo_risk_logs)
+      const { data: riskLog } = await supabase
+        .from('dfo_risk_logs')
+        .select('reasoning')
         .eq('thread_id', thread.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
         .single();
-      if (sla) setSlaData(sla);
+      if (riskLog) setRiskReason(riskLog.reasoning);
+
     }
-    fetchDetails();
+    fetchDeepIntel();
   }, [thread]);
 
   const riskColors = {
@@ -55,11 +70,24 @@ export function ThreadInfoPanel({ thread }: ThreadInfoPanelProps) {
     green: 'text-emerald-600 bg-emerald-50 border-emerald-100'
   };
 
+  const currentJourney = patientData?.journey_stage || thread.journey_stage || 'pregnant';
+
   return (
-    <div className="flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-8">
+    <div className="flex flex-col h-full overflow-y-auto custom-scrollbar p-6 space-y-7">
       {/* 1. CLINICIAN DETAILS */}
       <section>
-        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Assisting Clinician</h3>
+        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Operational Status</h3>
+        <div className="flex items-center justify-between mb-3 px-1">
+           <div className="flex items-center gap-2">
+              <div className={cn("w-2 h-2 rounded-full", thread.ownership === 'AI' ? 'bg-indigo-500' : 'bg-emerald-500 animate-pulse')} />
+              <span className="text-[10px] font-black text-slate-600 uppercase tracking-tight">{thread.ownership || 'AI'} CONTROL</span>
+           </div>
+           <div className="flex items-center gap-1.5">
+              <MapPin className="w-3 h-3 text-slate-400" />
+              <span className="text-[10px] font-bold text-slate-500 uppercase">{thread.channel || 'Web'}</span>
+           </div>
+        </div>
+
         {assignedStaff ? (
           <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
             <div className="flex items-center gap-3 mb-3">
@@ -69,9 +97,16 @@ export function ThreadInfoPanel({ thread }: ThreadInfoPanelProps) {
               )}>
                 {assignedStaff.role === 'doctor' ? <Stethoscope className="w-5 h-5" /> : <HeartPulse className="w-5 h-5" />}
               </div>
-              <div>
-                <p className="text-sm font-bold text-slate-900">{assignedStaff.full_name}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{assignedStaff.role} On Duty</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-slate-900 truncate">{assignedStaff.full_name}</p>
+                <div className="flex items-center gap-2">
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{assignedStaff.role}</p>
+                   {assignedStaff.active_cases !== undefined && (
+                     <span className="text-[9px] font-black bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
+                       LOAD: {assignedStaff.active_cases}/{assignedStaff.max_cases}
+                     </span>
+                   )}
+                </div>
               </div>
             </div>
             <div className="space-y-2 pt-3 border-t border-slate-50">
@@ -86,60 +121,90 @@ export function ThreadInfoPanel({ thread }: ThreadInfoPanelProps) {
             </div>
           </div>
         ) : (
-          <div className="bg-slate-50 py-6 px-4 rounded-2xl border border-dashed border-slate-200 text-center">
-            <User className="w-8 h-8 text-slate-300 mx-auto mb-2 opacity-30" />
-            <p className="text-xs font-bold text-slate-400">WAITING FOR ASSIGNMENT</p>
+          <div className="bg-indigo-50/50 py-5 px-4 rounded-2xl border border-dashed border-indigo-100 text-center">
+            <BrainCircuit className="w-6 h-6 text-indigo-400 mx-auto mb-2 opacity-50" />
+            <p className="text-xs font-bold text-indigo-500 uppercase tracking-tight">AI Agent Managing Thread</p>
           </div>
         )}
       </section>
 
-      {/* 2. PATIENT CONTEXT */}
+      {/* 2. PATIENT JOURNEY INTELLIGENCE */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Patient Intelligence</h3>
+          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Journey Intelligence</h3>
           <span className={cn("text-[9px] font-black px-2 py-0.5 rounded-full border uppercase", riskColors[thread.risk_level])}>
             {thread.risk_level} Risk
           </span>
         </div>
+        
         <div className="space-y-4">
-           <div className="flex items-center justify-between group cursor-pointer">
-              <div className="flex flex-col">
-                <span className="text-xs text-slate-500 font-medium">Primary Subject</span>
-                <span className="text-sm font-black text-slate-900">{thread.patient_name}</span>
-              </div>
-              <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-sky-500 transition-colors" />
+           {/* Journey Badge */}
+           <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+             <div className="flex items-center gap-3 mb-4">
+                <div className="p-2.5 bg-sky-50 rounded-xl text-sky-600">
+                   {currentJourney === 'pregnant' ? <Baby className="w-6 h-6" /> : <Activity className="w-6 h-6" />}
+                </div>
+                <div>
+                   <p className="text-xs font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Maternal Stage</p>
+                   <p className="text-sm font-black text-slate-900 capitalize">{currentJourney.replace('_', ' ')}</p>
+                </div>
+             </div>
+             {(patientData?.pregnancy_stage || thread.pregnancy_stage) && (
+               <div className="space-y-2">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-wider">
+                     <span className="text-slate-400">Current Progress</span>
+                     <span className="text-sky-600">{patientData?.pregnancy_stage || thread.pregnancy_stage} WEEKS</span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-sky-500 transition-all duration-1000"
+                      style={{ width: `${((patientData?.pregnancy_stage || thread.pregnancy_stage || 0) / 40) * 100}%` }}
+                    />
+                  </div>
+               </div>
+             )}
            </div>
 
-           <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3">
-              <div className="flex justify-between items-center text-[11px]">
-                 <div className="flex items-center gap-1.5 text-slate-500 font-medium">
-                    <History className="w-3.5 h-3.5" />
-                    <span>Sentiment Score</span>
-                 </div>
-                 <span className={cn(
-                   "font-black px-1.5 py-0.5 rounded",
-                   thread.sentiment_score < -0.5 ? "text-rose-600 bg-rose-50" : "text-emerald-600 bg-emerald-50"
-                 )}>
-                   {thread.sentiment_score.toFixed(2)}
-                 </span>
-              </div>
-              <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                <div 
-                  className={cn("h-full transition-all duration-1000", thread.sentiment_score < -0.5 ? "bg-rose-500" : "bg-emerald-500")}
-                  style={{ width: `${((thread.sentiment_score + 1) / 2) * 100}%` }}
-                />
-              </div>
-           </div>
+           {/* Risk Reasoning */}
+           {riskReason && (
+             <div className="bg-rose-50/50 p-4 rounded-2xl border border-rose-100/50">
+               <div className="flex items-center gap-2 mb-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-rose-500" />
+                  <span className="text-[10px] font-black text-rose-600 uppercase tracking-widest">Clinical Logic</span>
+               </div>
+               <p className="text-xs text-rose-900 font-medium leading-relaxed italic">
+                 "{riskReason}"
+               </p>
+             </div>
+           )}
+
+           {/* Medical History Snippet */}
+           {patientData?.medical_history && patientData.medical_history.length > 0 && (
+             <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+               <div className="flex items-center gap-2 mb-3">
+                  <FileText className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Past History</span>
+               </div>
+               <div className="flex flex-wrap gap-1.5">
+                  {patientData.medical_history.slice(0, 3).map((item, idx) => (
+                    <span key={idx} className="text-[9px] font-bold bg-slate-50 text-slate-600 px-2 py-0.5 rounded border border-slate-100">
+                      {item}
+                    </span>
+                  ))}
+               </div>
+             </div>
+           )}
         </div>
       </section>
 
       {/* 3. SESSION METADATA */}
-      <section className="flex-1">
-        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Session Metadata</h3>
+      <section className="flex-1 min-h-0">
+        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Platform Metadata</h3>
         <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
-           {slaData && (
-             <div className="pb-4 border-b border-slate-50">
-               <SLATimer deadline={slaData.response_deadline} status={slaData.status} />
+           {!thread.sla_met && thread.sla_breached && (
+             <div className="p-3 bg-rose-50 rounded-xl border border-rose-100 flex items-center justify-between">
+                <span className="text-[10px] font-black text-rose-600 uppercase">SLA BREACHED</span>
+                <Clock className="w-4 h-4 text-rose-500 animate-pulse" />
              </div>
            )}
 
@@ -147,40 +212,23 @@ export function ThreadInfoPanel({ thread }: ThreadInfoPanelProps) {
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-wider">
                   <Calendar className="w-3 h-3" />
-                  <span>Date Created</span>
+                  <span>Initiated</span>
                 </div>
-                <p className="text-xs font-bold text-slate-800">{format(parseISO(thread.created_at), 'MMM dd, yyyy')}</p>
+                <p className="text-xs font-bold text-slate-800">{format(parseISO(thread.created_at), 'MMM dd')}</p>
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-wider">
                   <Clock className="w-3 h-3" />
-                  <span>Triage Time</span>
+                  <span>Last Hub Sync</span>
                 </div>
-                <p className="text-xs font-bold text-slate-800">{format(parseISO(thread.created_at), 'HH:mm:ss')}</p>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-wider">
-                  <MapPin className="w-3 h-3" />
-                  <span>Channel</span>
-                </div>
-                <p className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                  JanmaSethu Web
-                </p>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-wider">
-                  <History className="w-3 h-3" />
-                  <span>Engagement</span>
-                </div>
-                <p className="text-xs font-bold text-slate-800 tracking-tight leading-tight">Human Priority</p>
+                <p className="text-xs font-bold text-slate-800">{format(new Date(), 'HH:mm')}</p>
               </div>
            </div>
         </div>
       </section>
 
-      <div className="pt-4 mt-auto opacity-40 text-center">
-         <p className="text-[9px] font-black text-slate-400 tracking-[0.2em]">PLATFORM SECURED BY DFO v1.4.2</p>
+      <div className="pt-4 opacity-30 text-center pb-2">
+         <p className="text-[9px] font-black text-slate-400 tracking-[0.2em]">DFO IQ v2.0 • SAKHI CORE</p>
       </div>
     </div>
   );
