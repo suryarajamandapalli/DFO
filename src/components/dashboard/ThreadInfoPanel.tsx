@@ -138,32 +138,53 @@ export function ThreadInfoPanel({ thread }: ThreadInfoPanelProps) {
         </div>
         
         <div className="space-y-4">
-           {/* Journey Badge */}
-           <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-             <div className="flex items-center gap-3 mb-4">
-                <div className="p-2.5 bg-sky-50 rounded-xl text-sky-600">
-                   {currentJourney === 'pregnant' ? <Baby className="w-6 h-6" /> : <Activity className="w-6 h-6" />}
-                </div>
-                <div>
-                   <p className="text-xs font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Maternal Stage</p>
-                   <p className="text-sm font-black text-slate-900 capitalize">{currentJourney.replace('_', ' ')}</p>
-                </div>
-             </div>
-             {(patientData?.pregnancy_stage || thread.pregnancy_stage) && (
-               <div className="space-y-2">
-                  <div className="flex justify-between text-[10px] font-black uppercase tracking-wider">
-                     <span className="text-slate-400">Current Progress</span>
-                     <span className="text-sky-600">{patientData?.pregnancy_stage || thread.pregnancy_stage} WEEKS</span>
+            {/* Journey Status */}
+            <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                {currentJourney === 'pregnant' ? <Baby className="w-12 h-12" /> : <Activity className="w-12 h-12" />}
+              </div>
+              
+              <div className="relative z-10">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Stage & Progress</p>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-14 h-14 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-600 border border-sky-100/50">
+                    {currentJourney === 'pregnant' ? <Baby className="w-7 h-7" /> : <Activity className="w-7 h-7" />}
                   </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-sky-500 transition-all duration-1000"
-                      style={{ width: `${((patientData?.pregnancy_stage || thread.pregnancy_stage || 0) / 40) * 100}%` }}
-                    />
+                  <div>
+                    <p className="text-lg font-black text-slate-900 leading-none mb-1 capitalize">
+                      {currentJourney.replace(/_/g, ' ')}
+                    </p>
+                    <p className="text-[10px] font-bold text-sky-500 uppercase tracking-widest leading-none">
+                      Active Engagement
+                    </p>
                   </div>
-               </div>
-             )}
-           </div>
+                </div>
+
+                {(patientData?.pregnancy_stage || thread.pregnancy_stage) ? (
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-end">
+                      <span className="text-[11px] font-black text-slate-800 uppercase">
+                        {patientData?.pregnancy_stage || thread.pregnancy_stage} Weeks Completed
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        Term: 40w
+                      </span>
+                    </div>
+                    <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-50">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${((patientData?.pregnancy_stage || thread.pregnancy_stage || 0) / 40) * 100}%` }}
+                        className="h-full bg-sky-500 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.4)]"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="py-2 px-3 bg-slate-50 rounded-xl border border-slate-100 inline-block">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Awaiting Stage Update</span>
+                  </div>
+                )}
+              </div>
+            </div>
 
            {/* Risk Reasoning */}
            {riskReason && (

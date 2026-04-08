@@ -40,19 +40,43 @@ export function DashboardLayout({ children, activeMenu = 'dashboard', rightPanel
     setIsMobileMenuOpen(false);
   }, [navigate]);
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: `/dashboard/${profile?.role}` },
-    { id: 'patients', label: 'Patients', icon: Users, path: '#' },
-    { id: 'inbox', label: 'Inbox', icon: MessageSquare, path: `/dashboard/${profile?.role}/inbox` },
-    { id: 'risk', label: 'Risk Monitor', icon: ShieldAlert, path: '#' },
-    { id: 'appointments', label: 'Appointments', icon: Calendar, path: '#' },
-    { id: 'consultations', label: 'Consultations', icon: HeartPulse, path: '#' },
-    { id: 'documents', label: 'Documents', icon: FileText, path: '#' },
-    { id: 'engagement', label: 'Engagement', icon: Target, path: '#' },
-    { id: 'crm', label: 'Leads CRM', icon: UserPlus, path: '#' },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3, path: '#' },
-    { id: 'admin', label: 'Admin / Compliance', icon: Lock, path: '#' },
-  ];
+  const getMenuItems = () => {
+    const isAdmin = profile?.role === 'cro';
+    const isNurse = profile?.role === 'nurse';
+
+    const baseItems = [
+      { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: `/dashboard/${profile?.role}` },
+      { id: 'patients', label: 'My Patients', icon: Users, path: `/dashboard/${profile?.role}/patients` },
+      { id: 'inbox', label: 'Inbox', icon: MessageSquare, path: `/dashboard/${profile?.role}${isAdmin ? '/inbox' : ''}` },
+    ];
+
+    if (isNurse) {
+      return [
+        ...baseItems,
+        { id: 'escalations', label: 'Escalations', icon: ShieldAlert, path: '#' },
+        { id: 'appointments', label: 'Appointments', icon: Calendar, path: '#' },
+        { id: 'consultations', label: 'Consultations', icon: HeartPulse, path: '#' },
+      ];
+    }
+
+    if (isAdmin) {
+      return [
+        ...baseItems,
+        { id: 'risk', label: 'Risk Monitor', icon: ShieldAlert, path: '#' },
+        { id: 'appointments', label: 'Appointments', icon: Calendar, path: '#' },
+        { id: 'consultations', label: 'Consultations', icon: HeartPulse, path: '#' },
+        { id: 'documents', label: 'Documents', icon: FileText, path: '#' },
+        { id: 'engagement', label: 'Engagement', icon: Target, path: '#' },
+        { id: 'crm', label: 'Leads CRM', icon: UserPlus, path: '#' },
+        { id: 'analytics', label: 'Analytics', icon: BarChart3, path: '#' },
+        { id: 'admin', label: 'Admin / Compliance', icon: Lock, path: '#' },
+      ];
+    }
+
+    return baseItems;
+  };
+
+  const menuItems = getMenuItems();
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-[#0f172a] text-white">

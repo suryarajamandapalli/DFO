@@ -14,6 +14,7 @@ import { CroDashboard } from './pages/dashboard/CroDashboard';
 import { NurseDashboard } from './pages/dashboard/NurseDashboard';
 import { DoctorDashboard } from './pages/dashboard/DoctorDashboard';
 import { ClinicalOverview } from './pages/dashboard/ClinicalOverview';
+import { PatientsOverview } from './pages/dashboard/PatientsOverview';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 function App() {
@@ -48,12 +49,15 @@ function App() {
         <Route element={<ProtectedRoute requireRole="cro" />}>
           <Route path="/dashboard/cro" element={<ClinicalOverview />} />
           <Route path="/dashboard/cro/inbox" element={<CroDashboard />} />
+          <Route path="/dashboard/cro/patients" element={<PatientsOverview />} />
         </Route>
         <Route element={<ProtectedRoute requireRole="nurse" />}>
           <Route path="/dashboard/nurse" element={<NurseDashboard />} />
+          <Route path="/dashboard/nurse/patients" element={<PatientsOverview />} />
         </Route>
         <Route element={<ProtectedRoute requireRole="doctor" />}>
           <Route path="/dashboard/doctor" element={<DoctorDashboard />} />
+          <Route path="/dashboard/doctor/patients" element={<PatientsOverview />} />
         </Route>
 
         {/* Catch-all Fallback Route */}
