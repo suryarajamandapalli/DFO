@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/ui/button';
 import { motion } from 'motion/react';
 import { AlertCircle, HeartPulse } from 'lucide-react';
 
