@@ -41,9 +41,9 @@ interface StatItem {
 }
 
 const StatCard = ({ stat, key }: { stat: StatItem, key?: React.Key }) => (
-    <Card key={stat.label} className="border-none shadow-sm rounded-2xl bg-white overflow-hidden group hover:shadow-md transition-all duration-300 ring-1 ring-slate-100">
-        <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-5">
+    <Card key={stat.label} className="border-none shadow-md rounded-2xl bg-white overflow-hidden group hover:shadow-lg transition-all duration-300 ring-1 ring-slate-200/60">
+        <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
                 <div className={cn("p-3 rounded-xl shadow-sm", stat.bg)}>
                     <stat.icon className={cn("h-5 w-5", stat.color)} />
                 </div>
@@ -130,14 +130,14 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
             </div>
 
             <div className="grid gap-6 md:grid-cols-7">
-                <Card className="md:col-span-7 border-none shadow-sm rounded-2xl bg-white ring-1 ring-slate-100">
+                <Card className="md:col-span-7 border-none shadow-md rounded-2xl bg-white ring-1 ring-slate-200/60">
 
-                    <CardHeader className="p-7 pb-0">
+                    <CardHeader className="p-5 pb-0">
                         <CardTitle className="text-lg font-black text-slate-950 tracking-tight">Patient Inflow Analytics</CardTitle>
                         <CardDescription className="text-[10px] font-black uppercase tracking-widest text-sky-500 mt-1">New registrations over last 5 days.</CardDescription>
 
                     </CardHeader>
-                    <CardContent className="p-7 pt-5 h-[220px]">
+                    <CardContent className="p-5 pt-4 h-[220px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data}>
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#64748b' }} />
