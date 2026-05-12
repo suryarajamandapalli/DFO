@@ -419,7 +419,19 @@ export const PatientDetailView = ({
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Button variant="outline" className="bg-card border-border hover:bg-muted text-foreground rounded-xl font-bold uppercase text-[10px] tracking-widest gap-2">
+                        <Button 
+                            variant="outline" 
+                            className="bg-card border-border hover:bg-muted text-foreground rounded-xl font-bold uppercase text-[10px] tracking-widest gap-2"
+                            onClick={() => {
+                                const element = document.createElement("a");
+                                const file = new Blob(["Clinical Report Document Simulation"], {type: 'application/pdf'});
+                                element.href = URL.createObjectURL(file);
+                                element.download = `${selectedDoc?.title || 'Clinical_Report'}.pdf`;
+                                document.body.appendChild(element);
+                                element.click();
+                                document.body.removeChild(element);
+                            }}
+                        >
                             <Download className="h-4 w-4" /> Export PDF
                         </Button>
                         <Button variant="ghost" onClick={() => setShowDocument(false)} className="h-10 w-10 text-muted-foreground hover:text-foreground rounded-xl p-0">
