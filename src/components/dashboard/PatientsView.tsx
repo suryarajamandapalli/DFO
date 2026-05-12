@@ -157,6 +157,14 @@ export const PatientsView = ({
     );
 };
 
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from '@/components/ui/dialog';
+
 export const PatientDetailView = ({
     patient,
     onBack,
@@ -166,6 +174,14 @@ export const PatientDetailView = ({
     onBack: () => void,
     onSchedule: () => void
 }) => {
+    const [showProfile, setShowProfile] = React.useState(false);
+    const [showDocument, setShowDocument] = React.useState(false);
+    const [selectedDoc, setSelectedDoc] = React.useState<any>(null);
+
+    const handleViewDoc = (doc: any) => {
+        setSelectedDoc(doc);
+        setShowDocument(true);
+    };
     return (
         <div className="p-6 lg:p-10 space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000">
             <div className="flex items-center justify-between">
@@ -173,7 +189,11 @@ export const PatientDetailView = ({
                     <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to Registry
                 </Button>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="rounded-xl font-bold uppercase text-[10px] tracking-widest border-border">
+                    <Button 
+                        variant="outline" 
+                        className="rounded-xl font-bold uppercase text-[10px] tracking-widest border-border"
+                        onClick={() => setShowProfile(true)}
+                    >
                         <Edit2 className="h-4 w-4 mr-2" /> Medical Profile
                     </Button>
                     <Button
@@ -300,7 +320,14 @@ export const PatientDetailView = ({
 
                                             <div className="mt-3 p-4 rounded-2xl bg-slate-50 border border-slate-100 hidden group-hover:block animate-in fade-in slide-in-from-top-2">
                                                 <p className="text-xs text-slate-600 leading-relaxed font-medium">Standard clinical evaluation conducted. Vital signs within normal parameters for the patient's gestational stage.</p>
-                                                <Button variant="link" size="sm" className="p-0 h-auto mt-2 text-[10px] font-bold uppercase text-primary">View Full Document</Button>
+                                                <Button 
+                                                    variant="link" 
+                                                    size="sm" 
+                                                    className="p-0 h-auto mt-2 text-[10px] font-bold uppercase text-primary"
+                                                    onClick={() => handleViewDoc(event)}
+                                                >
+                                                    View Full Document
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
@@ -311,5 +338,110 @@ export const PatientDetailView = ({
                 </div>
             </div>
         </div>
+
+        {/* Medical Profile Dialog */}
+        <Dialog open={showProfile} onOpenChange={setShowProfile}>
+            <DialogContent className="max-w-2xl rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-white">
+                <DialogHeader className="p-8 bg-slate-950 text-white">
+                    <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center">
+                            <FileSignature className="h-6 w-6 text-sky-400" />
+                        </div>
+                        <div>
+                            <DialogTitle className="text-xl font-black tracking-tight">Comprehensive Medical Profile</DialogTitle>
+                            <DialogDescription className="text-xs font-bold text-white/50 uppercase tracking-widest">Confidential Patient Health Record</DialogDescription>
+                        </div>
+                    </div>
+                </DialogHeader>
+                <div className="p-8 space-y-6">
+                    <div className="grid grid-cols-2 gap-8">
+                        <div className="space-y-4">
+                            <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Personal Details</h5>
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Name:</span> <span className="font-bold text-slate-900">{patient.name}</span></div>
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Age:</span> <span className="font-bold text-slate-900">{patient.age} Years</span></div>
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Phone:</span> <span className="font-bold text-slate-900">{patient.phone}</span></div>
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Clinical Data</h5>
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Risk Score:</span> <Badge className="bg-emerald-500 font-black">{patient.riskLevel}</Badge></div>
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Journey:</span> <span className="font-bold text-slate-900 uppercase text-xs">{patient.journeyStage}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="pt-6 border-t border-slate-100">
+                        <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Chronic Conditions & History</h5>
+                        <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                            No significant chronic conditions reported. Patient is currently in the {patient.journeyStage?.replace('_', ' ')} stage. Previous fertility markers indicate normal parameters. Last medical review conducted on Oct 24, 2026.
+                        </p>
+                    </div>
+                    <div className="flex justify-end pt-4">
+                        <Button onClick={() => setShowProfile(false)} className="rounded-xl bg-slate-950 font-bold px-8">Close Profile</Button>
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
+
+        {/* Document Preview Dialog */}
+        <Dialog open={showDocument} onOpenChange={setShowDocument}>
+            <DialogContent className="max-w-3xl rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-slate-50">
+                <DialogHeader className="p-6 bg-white border-b border-slate-100 flex-row items-center justify-between space-y-0">
+                    <div className="flex items-center gap-4">
+                        <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center", selectedDoc?.color)}>
+                            {selectedDoc && <selectedDoc.icon className="h-5 w-5" />}
+                        </div>
+                        <div>
+                            <DialogTitle className="text-lg font-black tracking-tight">{selectedDoc?.title}</DialogTitle>
+                            <DialogDescription className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{selectedDoc?.type} • {selectedDoc?.time}</DialogDescription>
+                        </div>
+                    </div>
+                    <Button variant="outline" className="rounded-xl font-bold uppercase text-[10px] tracking-widest border-slate-200 gap-2">
+                        <Download className="h-4 w-4" /> Download PDF
+                    </Button>
+                </DialogHeader>
+                <div className="p-10">
+                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-12 min-h-[400px] flex flex-col">
+                        <div className="flex justify-between border-b-2 border-slate-100 pb-8 mb-8">
+                            <div>
+                                <h3 className="font-black text-2xl tracking-tighter text-slate-900">DFO | <span className="text-sky-500">Janmasethu</span></h3>
+                                <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest mt-1">Clinical Oversight Division</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Document ID</p>
+                                <p className="text-xs font-black text-slate-900">REF-88392-DFO</p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex-1 space-y-6">
+                            <div className="space-y-2">
+                                <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Subjective Analysis</p>
+                                <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                                    Patient {patient.name} presented for a {selectedDoc?.title}. Clinical evaluation indicates stable vital signs and consistent progress within the current journey stage ({patient.journeyStage}).
+                                </p>
+                            </div>
+                            <div className="space-y-2">
+                                <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Observations</p>
+                                <ul className="text-sm text-slate-600 font-medium space-y-1 list-disc pl-4">
+                                    <li>Normal physiological response observed.</li>
+                                    <li>Uterine markers stable.</li>
+                                    <li>Patient reports no significant discomfort.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="mt-12 pt-8 border-t border-slate-100 flex justify-between items-end">
+                            <div>
+                                <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Digitally Signed By</p>
+                                <p className="text-sm font-black text-slate-950 mt-1 italic">Dr. Alexander Smith</p>
+                                <p className="text-[8px] font-black uppercase text-sky-500 tracking-widest">Clinical Director, DFO</p>
+                            </div>
+                            <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-100 font-black uppercase text-[8px] tracking-widest px-3 py-1">Verified Clinical Record</Badge>
+                        </div>
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 };
