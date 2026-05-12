@@ -148,22 +148,7 @@
 }
 
 
-/* Global Density System */
-[data-density="compact"] {
-    --radius: 0.5rem;
-}
 
-[data-density="cozy"] {
-    --radius: 1rem;
-}
-
-[data-density="cozy"] .p-6 { @apply p-10; }
-[data-density="cozy"] .p-10 { @apply p-14; }
-[data-density="cozy"] .rounded-2xl { @apply rounded-3xl; }
-[data-density="cozy"] .rounded-[3rem] { @apply rounded-[3.5rem]; }
-
-[data-density="compact"] .p-6 { @apply p-5; }
-[data-density="compact"] .p-10 { @apply p-8; }
 
 /* Sidebar Layout System */
 [data-sidebar="slim"] aside {

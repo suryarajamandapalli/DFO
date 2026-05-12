@@ -12,7 +12,8 @@ import {
     Send,
     Plus,
     RefreshCw,
-    MoreHorizontal
+    MoreHorizontal,
+    ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -71,10 +72,12 @@ export const InboxView = ({
     const currentMessages = selectedThreadId ? messages[selectedThreadId] || [] : [];
 
     return (
-        <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-background">
-
+        <div className="flex h-[calc(100vh-140px)] lg:h-[calc(100vh-80px)] overflow-hidden bg-background">
             {/* Sidebar: Message List */}
-            <div className="w-96 border-r border-border bg-card flex flex-col">
+            <div className={cn(
+                "w-full lg:w-96 border-r border-border bg-card flex flex-col transition-all duration-300",
+                selectedThreadId ? "hidden lg:flex" : "flex"
+            )}>
 
                 <div className="p-6 border-b border-border">
                     <div className="flex items-center justify-between mb-4">
@@ -126,14 +129,22 @@ export const InboxView = ({
                 </ScrollArea>
             </div>
 
-            {/* Main: Chat Window */}
-            <div className="flex-1 flex flex-col bg-background">
-
+            <div className={cn(
+                "flex-1 flex flex-col bg-background transition-all duration-300",
+                !selectedThreadId ? "hidden lg:flex" : "flex"
+            )}>
                 {selectedThread ? (
                     <>
                         <div className="h-20 px-8 border-b border-border flex items-center justify-between bg-card/80 backdrop-blur-md sticky top-0 z-10">
-
                             <div className="flex items-center gap-4">
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="lg:hidden h-10 w-10 rounded-xl mr-2"
+                                    onClick={() => setSelectedThreadId(null)}
+                                >
+                                    <ArrowLeft className="h-5 w-5" />
+                                </Button>
                                 <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center font-black text-primary-foreground shadow-lg">
                                     {selectedThread.patientName.charAt(0)}
                                 </div>

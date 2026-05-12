@@ -19,7 +19,7 @@ export const AppointmentsView = ({ appointments }: { appointments: Appointment[]
         : sortedApps;
 
     return (
-        <div className="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
                 <div>
                     <h2 className="text-2xl font-black text-foreground tracking-tight">Appointments</h2>
@@ -49,14 +49,14 @@ export const AppointmentsView = ({ appointments }: { appointments: Appointment[]
                         />
                     </Card>
 
-                    <Card className="border-none shadow-2xl rounded-[3rem] bg-slate-900 text-white p-8">
+                    <Card className="border-none shadow-2xl rounded-[3rem] bg-foreground text-background p-8">
                         <h4 className="text-sm font-black uppercase tracking-widest opacity-60 mb-6">Daily Summary</h4>
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="p-4 rounded-2xl bg-white/10">
+                            <div className="p-4 rounded-2xl bg-background/10">
                                 <p className="text-[10px] uppercase font-black tracking-widest text-emerald-400 mb-1">Confirmed</p>
                                 <p className="text-2xl font-black">{filteredApps.length}</p>
                             </div>
-                            <div className="p-4 rounded-2xl bg-white/10">
+                            <div className="p-4 rounded-2xl bg-background/10">
                                 <p className="text-[10px] uppercase font-black tracking-widest text-amber-400 mb-1">Pending</p>
                                 <p className="text-2xl font-black">{filteredApps.length > 0 ? 1 : 0}</p>
                             </div>

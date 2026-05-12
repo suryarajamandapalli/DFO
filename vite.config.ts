@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        '@': 'C:/Users/surya/OneDrive/ONE DRIVE/Desktop/DFO/src',
+        '@': path.resolve(__dirname, './src'),
       },
     },
     server: {

@@ -56,7 +56,7 @@ export const PatientsView = ({
 
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-black text-foreground tracking-tight">Patient Registry</h2>
@@ -84,7 +84,8 @@ export const PatientsView = ({
             </div>
 
             <Card className="border-none shadow-2xl rounded-[3rem] overflow-hidden bg-card ring-1 ring-border">
-                <Table>
+                <div className="overflow-x-auto scrollbar-hide">
+                    <Table>
                     <TableHeader className="bg-muted/50">
 
                         <TableRow className="hover:bg-transparent border-none">
@@ -152,6 +153,7 @@ export const PatientsView = ({
                         ))}
                     </TableBody>
                 </Table>
+                </div>
             </Card>
         </div>
     );

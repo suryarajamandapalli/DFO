@@ -122,6 +122,7 @@ export default function App() {
   const [patientSearch, setPatientSearch] = useState('');
   const [globalSearch, setGlobalSearch] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // --- Theme & Persistence ---
   useEffect(() => {
@@ -345,11 +346,44 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden font-sans antialiased">
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card border-b border-border flex items-center justify-between px-6 z-50">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
+            <Stethoscope className="h-4 w-4 text-background" />
+          </div>
+          <span className="font-black text-sm tracking-tighter text-foreground">DFO | <span className="text-sky-500">Janmasethu</span></span>
+        </div>
+        <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="rounded-xl">
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </Button>
+      </div>
+
+      {/* Sidebar Overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{ width: collapsed ? 80 : 260 }}
-        className="relative z-20 flex flex-col border-r bg-white transition-all duration-500 ease-in-out"
+        animate={{ 
+          width: collapsed ? 80 : 260,
+          x: mobileMenuOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -260 : 0)
+        }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 lg:relative lg:translate-x-0 flex flex-col border-r bg-card transition-all duration-300",
+          !mobileMenuOpen && "-translate-x-full lg:translate-x-0"
+        )}
       >
         <div className="flex h-20 items-center px-6">
           <div className="flex items-center gap-3">
@@ -362,10 +396,10 @@ export default function App() {
                 animate={{ opacity: 1, x: 0 }}
                 className="flex flex-col"
               >
-                <span className="font-black text-xl tracking-tighter text-slate-900 leading-none">
+                <span className="font-black text-xl tracking-tighter text-foreground leading-none">
                   DFO | <span className="text-sky-500">Janmasethu</span>
                 </span>
-                <span className="text-[7px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 truncate max-w-[120px]">
+                <span className="text-[7px] font-black uppercase tracking-[0.2em] text-muted-foreground mt-1 truncate max-w-[120px]">
                   {profile?.domain || 'Clinical OS v2.0'}
                 </span>
               </motion.div>
@@ -400,57 +434,47 @@ export default function App() {
 
       {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="h-18 bg-white flex items-center justify-between px-8 z-10 border-b border-slate-100">
-          <div className="flex items-center gap-4 flex-1 max-w-xl relative">
-            <div className="relative w-full group">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-sky-500 transition-colors" />
-              <Input
-                value={globalSearch}
-                onChange={(e) => setGlobalSearch(e.target.value)}
-                placeholder="Search clinical records..."
-                className="pl-10 bg-slate-50 border-transparent focus-visible:bg-white focus-visible:ring-sky-500/10 focus-visible:border-sky-500/20 h-11 rounded-xl font-medium text-slate-900 transition-all"
-              />
-            </div>
+        <header className="h-20 flex items-center justify-between px-10 border-b bg-card hidden lg:flex">
+          <div className="flex-1 max-w-2xl relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search clinical records, patients, threads..." 
+              value={globalSearch}
+              onChange={(e) => setGlobalSearch(e.target.value)}
+              className="pl-11 h-12 rounded-2xl bg-muted border-none text-sm font-bold ring-offset-background placeholder:text-muted-foreground/30 focus-visible:ring-primary/20"
+            />
             
             {/* Search Results Dropdown */}
             <AnimatePresence>
-              {globalSearch.trim() && (
+              {globalSearch && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-12 left-0 right-0 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[100]"
+                  className="absolute top-full left-0 right-0 mt-4 bg-card rounded-[2rem] border border-border shadow-2xl overflow-hidden z-50 p-2"
                 >
-                  <div className="p-2 max-h-[400px] overflow-y-auto">
-                    {searchResults.length > 0 ? (
-                      searchResults.map((result: any, i) => (
-                        <div
-                          key={`${result.type}-${result.id}-${i}`}
+                  {searchResults.length > 0 ? (
+                    <div className="space-y-1">
+                      {searchResults.map((result: any) => (
+                        <button
+                          key={result.id}
                           onClick={() => handleSearchResultClick(result)}
-                          className="flex items-center justify-between p-3 hover:bg-slate-50 cursor-pointer rounded-xl transition-all group"
+                          className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-muted transition-all text-left group"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-primary/10 group-hover:text-primary">
-                              <result.icon className="h-4 w-4" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-slate-900 leading-none">{result.name}</p>
-                              <p className="text-[10px] text-slate-400 mt-1 uppercase font-black tracking-widest">{result.type}</p>
-                            </div>
+                          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                            <result.icon className="h-5 w-5" />
                           </div>
-                          <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest rounded-md px-1.5 opacity-50 group-hover:opacity-100">{result.tab}</Badge>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="p-8 text-center">
-                        <p className="text-sm font-bold text-slate-400">No clinical matches found</p>
-                      </div>
-                    )}
-                  </div>
-                  {searchResults.length > 0 && (
-                    <div className="p-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
-                       <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{searchResults.length} Records found</span>
-                       <span className="text-[9px] font-black text-sky-500 uppercase tracking-widest">Global Scan Complete</span>
+                          <div>
+                            <p className="font-black text-foreground text-sm tracking-tight">{result.name || result.patientName || result.full_name}</p>
+                            <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mt-0.5">{result.type} • {result.tab}</p>
+                          </div>
+                          <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all" />
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center">
+                      <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">No matching records found</p>
                     </div>
                   )}
                 </motion.div>
@@ -458,28 +482,32 @@ export default function App() {
             </AnimatePresence>
           </div>
 
+          <div className="flex items-center gap-6">
 
-          <div className="flex items-center gap-4">
-            
+
+            </div>
+
+            <Separator orientation="vertical" className="h-8" />
+
+            {/* Notifications Popover */}
             <DropdownMenu>
-              <DropdownMenuTrigger className="relative h-10 w-10 rounded-xl bg-white border border-slate-100 hover:border-slate-300 flex items-center justify-center outline-none transition-all group">
-                <Bell className="h-4.5 w-4.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-black text-white shadow-lg shadow-red-500/20">
-                    {unreadCount}
-                  </span>
-                )}
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl relative bg-muted/50 border border-border">
+                  <Bell className="h-5 w-5 text-muted-foreground" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-background animate-bounce" />
+                  )}
+                </Button>
               </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end" className="w-80 rounded-xl p-0 overflow-hidden shadow-2xl border-primary/10">
-                <div className="bg-primary p-4 text-primary-foreground flex justify-between items-end">
+              <DropdownMenuContent align="end" className="w-[400px] rounded-[2rem] p-0 border border-border shadow-2xl overflow-hidden mt-2">
+                <div className="p-6 bg-card border-b flex items-center justify-between">
                   <div>
-                    <h4 className="font-bold text-sm">Notifications</h4>
-                    <p className="text-[10px] opacity-70 uppercase font-black tracking-widest mt-1">{unreadCount} New Alerts</p>
+                    <h4 className="font-bold text-sm text-foreground">Notifications</h4>
+                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-1">{unreadCount} New Alerts</p>
                   </div>
                   <button
                     onClick={() => setNotifications(notifications.map(n => ({ ...n, isRead: true })))}
-                    className="text-[10px] uppercase font-black hover:underline underline-offset-4"
+                    className="text-[10px] uppercase font-black hover:underline underline-offset-4 text-primary"
                   >
                     Mark all read
                   </button>
@@ -489,80 +517,71 @@ export default function App() {
                     {notifications.map((n) => (
                       <div
                         key={n.id}
-                        onClick={() => setNotifications(notifications.map(notif => notif.id === n.id ? { ...notif, isRead: true } : notif))}
                         className={cn(
-                          "p-4 hover:bg-accent transition-colors cursor-pointer group relative",
-                          !n.isRead && "bg-primary/5 hover:bg-primary/10"
+                          "p-5 hover:bg-muted/50 transition-colors flex gap-4 items-start",
+                          !n.isRead && "bg-primary/5"
                         )}
                       >
-                        {!n.isRead && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />}
-                        <div className="flex gap-3">
-                          <div className={cn("mt-1.5 w-2 h-2 rounded-full shrink-0",
-                            n.level === 'RED' ? 'bg-red-500 animate-pulse' :
-                              n.level === 'YELLOW' ? 'bg-amber-500' :
-                                n.level === 'GREEN' ? 'bg-emerald-500' : 'bg-blue-500'
-                          )} />
-                          <div className="space-y-1">
-                            <div className="flex justify-between items-start gap-2">
-                              <p className={cn("text-xs font-bold leading-none transition-colors",
-                                !n.isRead ? "text-foreground" : "text-muted-foreground"
-                              )}>{n.title}</p>
-                              {!n.isRead && <Badge className="text-[7px] h-3 px-1 uppercase bg-primary text-white border-none">New</Badge>}
-                            </div>
-                            <p className="text-[11px] text-muted-foreground line-clamp-2">{n.desc}</p>
-                            <p className="text-[9px] font-medium text-muted-foreground/60 uppercase">{n.time}</p>
-                          </div>
+                        <div className={cn(
+                          "h-10 w-10 rounded-xl flex items-center justify-center shrink-0",
+                          n.type === 'EMERGENCY' ? "bg-red-50 text-red-600" : "bg-sky-50 text-sky-600"
+                        )}>
+                          {n.type === 'EMERGENCY' ? <AlertTriangle className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
                         </div>
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none">{n.type}</p>
+                          <p className="text-sm font-bold text-foreground leading-tight">{n.message}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground">{n.time}</p>
+                        </div>
+                        {!n.isRead && <div className="ml-auto w-2 h-2 rounded-full bg-primary mt-1" />}
                       </div>
                     ))}
                   </div>
                 </ScrollArea>
+                <div className="p-4 bg-muted/50 text-center">
+                  <button className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">View All Activities</button>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Separator orientation="vertical" className="h-6" />
-
+            {/* User Profile Menu */}
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-3 pl-1.5 pr-3 h-11 rounded-xl bg-white border border-slate-100 hover:border-slate-300 transition-all outline-none group">
-                <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center border border-slate-800 shadow-lg text-white font-black text-[10px] uppercase tracking-tighter group-hover:scale-105 transition-transform">
-                  {profile?.full_name ? profile.full_name.charAt(0) : (user?.email?.charAt(0) || 'U')}
-                </div>
-                <div className="text-left hidden sm:block">
-                  <p className="text-[13px] font-bold text-slate-900 leading-none">{profile?.full_name || user?.email?.split('@')[0] || 'Clinical Member'}</p>
-                  <p className="text-[8px] font-black text-sky-500 uppercase tracking-widest mt-1.5 leading-none">{role}</p>
-                </div>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-3 p-1.5 pr-4 rounded-2xl bg-muted/50 border border-border hover:bg-muted transition-all">
+                  <div className="h-9 w-9 rounded-xl bg-foreground flex items-center justify-center text-background text-sm font-black shadow-md">
+                    {profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="hidden lg:block text-left">
+                    <p className="text-[11px] font-black text-foreground tracking-tight leading-none truncate max-w-[100px]">
+                      {profile?.full_name || 'Clinic Admin'}
+                    </p>
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-1">
+                      {profile?.role || 'Staff'}
+                    </p>
+                  </div>
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 rounded-xl p-2 shadow-2xl border-slate-100">
+              <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2 border border-border shadow-2xl mt-2">
+                <DropdownMenuLabel className="p-4">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-xs font-black uppercase text-muted-foreground tracking-widest leading-none">Identified As</p>
+                    <p className="text-sm font-bold text-foreground truncate">{user?.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 py-1.5">My Account Management</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="rounded-lg py-2.5 cursor-pointer" 
-                    onSelect={() => setActiveTab('Profile')}
-                    onClick={(e) => { e.preventDefault(); setActiveTab('Profile'); }}
-                  >
-                    <User className="mr-3 h-4 w-4 text-slate-500" /> 
-                    <span className="font-bold text-sm">Clinical Profile</span>
+                  <DropdownMenuItem className="rounded-lg py-2.5 cursor-pointer">
+                    <User className="mr-3 h-4 w-4" /> 
+                    <span className="font-bold text-sm">Professional Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    className="rounded-lg py-2.5 cursor-pointer" 
-                    onSelect={() => setActiveTab('Settings')}
-                    onClick={(e) => { e.preventDefault(); setActiveTab('Settings'); }}
-                  >
-                    <Settings className="mr-3 h-4 w-4 text-slate-500" /> 
+                  <DropdownMenuItem className="rounded-lg py-2.5 cursor-pointer">
+                    <Settings className="mr-3 h-4 w-4" /> 
                     <span className="font-bold text-sm">OS Settings</span>
                   </DropdownMenuItem>
-
-
-
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  onSelect={() => signOut()} 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    signOut();
-                  }}
+                  onClick={() => signOut()}
                   className="text-red-600 rounded-lg py-2.5 cursor-pointer hover:bg-red-50"
                 >
                   <LogOut className="mr-3 h-4 w-4" /> 
@@ -576,26 +595,28 @@ export default function App() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto bg-slate-50/30">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="h-full"
-            >
-              {loading ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                    <p className="text-sm font-bold text-muted-foreground animate-pulse">Syncing with Clinical Cloud...</p>
+        <main className="flex-1 flex flex-col min-w-0 bg-background overflow-hidden pt-16 lg:pt-0">
+          <ScrollArea className="flex-1 h-full">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="min-h-full p-4 lg:p-8 max-w-[1600px] mx-auto"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                      <p className="text-sm font-bold text-muted-foreground animate-pulse">Syncing with Clinical Cloud...</p>
+                    </div>
                   </div>
-                </div>
-              ) : renderContent()}
-            </motion.div>
-          </AnimatePresence>
+                ) : renderContent()}
+              </motion.div>
+            </AnimatePresence>
+          </ScrollArea>
         </main>
 
       </div>

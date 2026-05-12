@@ -65,7 +65,7 @@ export const LeadsView = ({ leads, onConvert }: LeadsViewProps) => {
     };
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-black text-foreground tracking-tight">Leads & CRM</h2>
