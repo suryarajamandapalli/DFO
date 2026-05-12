@@ -285,9 +285,20 @@ export default function App() {
       case 'Settings':
         return <SettingsView />;
       case 'Profile':
-        console.log("Rendering ProfileView with profile:", !!profile);
-        if (!user) return <div className="p-20 text-center font-bold">Authentication error. Please re-login.</div>;
-        return <ProfileView profile={profile} user={user} role={role} onSignOut={signOut} />;
+        return (
+          <div className="p-20 bg-white min-h-screen">
+            <h1 className="text-4xl font-black text-slate-900 mb-4">PROFILE DEBUG</h1>
+            <p className="text-lg text-slate-500">Active Tab: {activeTab}</p>
+            <p className="text-lg text-slate-500">User: {user?.email}</p>
+            <p className="text-lg text-slate-500">Profile Name: {profile?.full_name}</p>
+            <button 
+              onClick={() => setActiveTab('Dashboard')}
+              className="mt-10 px-8 py-4 bg-slate-950 text-white rounded-2xl font-black uppercase tracking-widest"
+            >
+              Back to Dashboard
+            </button>
+          </div>
+        );
 
 
 
