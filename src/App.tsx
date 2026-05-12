@@ -550,11 +550,6 @@ export default function App() {
                       </div>
                     ))}
                   </div>
-                </ScrollArea>
-                <div className="p-4 bg-muted/50 text-center">
-                  <button className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">View All Activities</button>
-                </div>
-              </DropdownMenuContent>
 
                   <div className="p-6 bg-slate-50 border-t border-slate-100">
                     <button className="w-full h-12 rounded-2xl bg-white border border-slate-200 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:text-slate-900 hover:border-slate-300 transition-all">
