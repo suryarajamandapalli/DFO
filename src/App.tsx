@@ -502,51 +502,51 @@ export default function App() {
             <Separator orientation="vertical" className="h-8" />
 
             {/* Notifications Popover */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl relative bg-muted/50 border border-border">
-                  <Bell className="h-5 w-5 text-muted-foreground" />
+            <Popover open={activePopover === 'notifications'} onOpenChange={(open) => setActivePopover(open ? 'notifications' : null)}>
+              <PopoverTrigger>
+                <button className="relative h-12 w-12 rounded-2xl bg-muted hover:bg-muted/80 transition-all border border-border flex items-center justify-center group">
+                  <Bell className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-background animate-bounce" />
+                    <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-red-500 ring-4 ring-background" />
                   )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[400px] rounded-[2rem] p-0 border border-border shadow-2xl overflow-hidden mt-2">
-                <div className="p-6 bg-card border-b flex items-center justify-between">
-                  <div>
-                    <h4 className="font-bold text-sm text-foreground">Notifications</h4>
-                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-1">{unreadCount} New Alerts</p>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[420px] p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl ring-1 ring-border mt-4">
+                <div className="bg-white">
+                  <div className="p-8 border-b border-slate-50 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xl font-black text-slate-900 tracking-tight">Notifications</h3>
+                      <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mt-1">{unreadCount} NEW ALERTS</p>
+                    </div>
+                    <button 
+                      onClick={() => setNotifications(notifications.map(n => ({ ...n, isRead: true })))}
+                      className="text-[10px] font-black uppercase text-primary tracking-widest hover:underline"
+                    >
+                      Mark all read
+                    </button>
                   </div>
-                  <button
-                    onClick={() => setNotifications(notifications.map(n => ({ ...n, isRead: true })))}
-                    className="text-[10px] uppercase font-black hover:underline underline-offset-4 text-primary"
-                  >
-                    Mark all read
-                  </button>
-                </div>
-                <ScrollArea className="h-80">
-                  <div className="divide-y divide-border/50">
+                  
+                  <div className="max-h-[450px] overflow-auto divide-y divide-slate-50">
                     {notifications.map((n) => (
-                      <div
-                        key={n.id}
-                        className={cn(
-                          "p-5 hover:bg-muted/50 transition-colors flex gap-4 items-start",
-                          !n.isRead && "bg-primary/5"
-                        )}
-                      >
+                      <div key={n.id} className={cn(
+                        "p-8 hover:bg-slate-50 transition-all flex items-start gap-6 group",
+                        !n.isRead && "bg-slate-50/50"
+                      )}>
                         <div className={cn(
-                          "h-10 w-10 rounded-xl flex items-center justify-center shrink-0",
-                          n.type === 'EMERGENCY' ? "bg-red-50 text-red-600" : "bg-sky-50 text-sky-600"
+                          "h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg transition-transform group-hover:scale-110",
+                          n.level === 'Immediate' ? "bg-red-50 text-red-500" : "bg-sky-50 text-sky-500"
                         )}>
-                          {n.type === 'EMERGENCY' ? <AlertTriangle className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
+                          {n.level === 'Immediate' ? <AlertTriangle className="h-6 w-6" /> : <Bell className="h-6 w-6" />}
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none">{n.level}</p>
-                          <p className="text-sm font-bold text-foreground leading-tight">{n.title}</p>
-                          <p className="text-[11px] font-medium text-muted-foreground leading-snug">{n.desc}</p>
-                          <p className="text-[10px] font-bold text-muted-foreground pt-1">{n.time}</p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{n.level}</span>
+                            {!n.isRead && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
+                          </div>
+                          <h4 className="text-sm font-black text-slate-900 mb-1">{n.title}</h4>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed truncate">{n.desc}</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-3">{n.time}</p>
                         </div>
-                        {!n.isRead && <div className="ml-auto w-2 h-2 rounded-full bg-primary mt-1" />}
                       </div>
                     ))}
                   </div>
