@@ -99,7 +99,10 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
         const dayStr = d.toISOString().split('T')[0];
         const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
 
-        const count = patients.filter(p => p.lastVisit && p.lastVisit.startsWith(dayStr)).length;
+        const count = patients.filter(p => {
+            if (!p.lastVisit || typeof p.lastVisit !== 'string') return false;
+            return p.lastVisit.startsWith(dayStr);
+        }).length;
         return { name: dayName, patients: count };
     });
 
@@ -194,7 +197,7 @@ const DoctorDashboard = ({ threads, appointments, patients, consultations = [], 
                                     <div>
                                         <h4 className="font-bold text-foreground group-hover:text-primary transition-colors">{thread.patientName}</h4>
                                         <p className="text-xs font-black text-muted-foreground uppercase tracking-tighter mt-0.5">
-                                            SLA: {new Date(thread.slaDeadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            SLA: {thread.slaDeadline ? new Date(thread.slaDeadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Pending'}
                                         </p>
                                     </div>
 
@@ -219,7 +222,7 @@ const DoctorDashboard = ({ threads, appointments, patients, consultations = [], 
                                     <p className="text-[10px] font-black uppercase opacity-50 mt-1">{app.type}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm font-black">{new Date(app.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                    <p className="text-sm font-black">{app.startTime ? new Date(app.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}</p>
                                     <p className="text-[10px] font-black uppercase text-sky-400">Confirmed</p>
                                 </div>
                             </div>
@@ -273,7 +276,7 @@ const NurseDashboard = ({ patients, appointments, profile }: { patients: Patient
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <div className="text-right">
-                                        <p className="text-sm font-black text-slate-900">{new Date(app.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                        <p className="text-sm font-black text-slate-900">{app.startTime ? new Date(app.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}</p>
                                         <p className="text-[9px] font-black uppercase text-emerald-500">Arriving Soon</p>
                                     </div>
                                     <Button size="sm" className="rounded-lg bg-slate-900 hover:bg-primary font-black uppercase text-[9px] tracking-widest px-4">Start Triage</Button>
