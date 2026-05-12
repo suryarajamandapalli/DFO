@@ -136,13 +136,13 @@ export const PatientsView = ({
                                                 patient.riskLevel === 'RED' ? "bg-red-500" :
                                                     patient.riskLevel === 'YELLOW' ? "bg-amber-500" : "bg-emerald-500"
                                             )} />
-                                            {patient.riskLevel}
+                                            {patient.riskLevel || 'N/A'}
                                         </div>
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-muted-foreground font-bold text-xs uppercase tabular-nums">
-                                    {new Date(patient.lastVisit || '').toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
-                                </TableCell>
+                                     {patient.lastVisit ? new Date(patient.lastVisit).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : 'N/A'}
+                                 </TableCell>
 
                                 <TableCell className="text-right px-8">
                                     <Button variant="ghost" size="icon" className="rounded-lg hover:bg-white border-transparent hover:border-slate-100 border transition-all">
@@ -240,7 +240,7 @@ export const PatientDetailView = ({
                                         "text-xs font-black mt-1",
                                         patient.riskLevel === 'RED' ? "text-red-500" :
                                             patient.riskLevel === 'YELLOW' ? "text-amber-500" : "text-emerald-500"
-                                    )}>{patient.riskLevel}</p>
+                                    )}>{patient.riskLevel || 'N/A'}</p>
                                 </div>
                                 <div className="text-center border-l border-border">
                                     <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Reg. Date</p>
@@ -455,7 +455,7 @@ export const PatientDetailView = ({
                                         </div>
                                         <div>
                                             <p className="text-[8px] font-black uppercase text-slate-400">Identity UID</p>
-                                            <p className="text-sm font-bold text-slate-900">{patient.id?.slice(0, 12).toUpperCase()}</p>
+                                            <p className="text-sm font-bold text-slate-900">{patient.id ? patient.id.slice(0, 12).toUpperCase() : 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>

@@ -126,6 +126,11 @@ export default function App() {
   const [globalSearch, setGlobalSearch] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: '1', title: 'Critical Risk Alert', desc: 'Patient Alpha risk score exceeded 85%. Triage required.', type: 'EMERGENCY', level: 'Immediate', time: '2m ago', isRead: false },
+    { id: '2', title: 'New Lab Results', desc: 'Bio-markers for Patient Beta are available for review.', type: 'SYSTEM', level: 'Moderate', time: '15m ago', isRead: true },
+    { id: '3', title: 'SLA Warning', desc: 'Case #8902 is approaching response deadline.', type: 'EMERGENCY', level: 'High', time: '1h ago', isRead: false },
+  ]);
 
   // --- Theme & Persistence ---
   useEffect(() => {
@@ -285,26 +290,9 @@ export default function App() {
       case 'Settings':
         return <SettingsView />;
       case 'Profile':
-        return (
-          <div className="p-20 bg-white min-h-screen">
-            <h1 className="text-4xl font-black text-slate-900 mb-4">PROFILE DEBUG</h1>
-            <p className="text-lg text-slate-500">Active Tab: {activeTab}</p>
-            <p className="text-lg text-slate-500">User: {user?.email}</p>
-            <p className="text-lg text-slate-500">Profile Name: {profile?.full_name}</p>
-            <button 
-              onClick={() => setActiveTab('Dashboard')}
-              className="mt-10 px-8 py-4 bg-slate-950 text-white rounded-2xl font-black uppercase tracking-widest"
-            >
-              Back to Dashboard
-            </button>
-          </div>
-        );
-
-
-
+        return <ProfileView profile={profile} user={user} role={role} onSignOut={signOut} />;
       default:
         return (
-
           <div className="flex flex-col items-center justify-center h-full p-12 text-center">
             <div className="p-8 rounded-full bg-accent mb-4">
               <Settings className="h-12 w-12 animate-spin-slow" />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Inbox as InboxIcon,
     Search,
@@ -46,7 +46,18 @@ export const InboxView = ({
     const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
     const [replyText, setReplyText] = useState('');
     const [isSending, setIsSending] = useState(false);
-    const fileInputRef = React.useRef<HTMLInputElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        if (selectedThreadId) {
+            scrollToBottom();
+        }
+    }, [messages, selectedThreadId]);
 
     const selectedThread = threads.find(t => t.id === selectedThreadId);
 
@@ -186,9 +197,8 @@ export const InboxView = ({
                             </div>
                         </div>
 
-                        <ScrollArea className="flex-1 p-8 bg-muted/20">
-
-                            <div className="space-y-6 max-w-4xl mx-auto">
+                        <ScrollArea className="flex-1 bg-muted/20">
+                            <div className="p-8 space-y-6 max-w-4xl mx-auto min-h-full flex flex-col justify-end">
                                 <div className="flex justify-center mb-8">
                                     <Badge variant="outline" className="bg-card backdrop-blur-sm px-4 py-1 rounded-full border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground">
                                         <Clock className="h-3 w-3 mr-2" /> Conversation started Oct 24, 2026
@@ -197,7 +207,7 @@ export const InboxView = ({
 
 
                                 {currentMessages.map((msg, i) => (
-                                    <div key={msg.id} className={cn("flex flex-col", msg.senderType === 'USER' ? "items-start" : "items-end")}>
+                                    <div key={msg.id} className={cn("flex flex-col mb-6", msg.senderType === 'USER' ? "items-start" : "items-end")}>
                                         <div className="flex items-center gap-2 mb-2 px-1">
                                             {msg.senderType === 'AI' && <Badge className="bg-sky-100 text-sky-600 border-none text-[8px] font-black uppercase tracking-tighter">AI Assistant</Badge>}
                                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{msg.senderName}</span>
@@ -214,6 +224,7 @@ export const InboxView = ({
                                         </div>
                                     </div>
                                 ))}
+                                <div ref={messagesEndRef} />
                             </div>
                         </ScrollArea>
 
