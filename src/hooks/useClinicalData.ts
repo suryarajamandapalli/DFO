@@ -94,34 +94,44 @@ export function useClinicalData() {
                 };
             });
             setPatients(mapped);
+            return mapped;
         }
+        return [];
     };
 
     // Fetch Threads
-    const fetchThreads = async () => {
-        const { data, error } = await supabase
-            .from('conversation_threads')
-            .select(`
-        *,
-        patients:dfo_patients!user_id(full_name)
-      `)
+    const fetchThreads = async (currentPatients?: Patient[]) => {
+        try {
+            const { data, error } = await supabase
+                .from('conversation_threads')
+                .select('*')
+                .order('updated_at', { ascending: false });
 
+            if (error) {
+                console.error('Fetch Threads Error:', error.message);
+                return;
+            }
 
-            .order('updated_at', { ascending: false });
-
-        if (data) {
-            const mapped: Thread[] = data.map(t => ({
-                id: t.id,
-                patientId: t.user_id,
-                patientName: t.dfo_patients?.full_name || 'Unknown Patient',
-                riskLevel: (t.status === 'red' ? 'RED' : t.status === 'yellow' ? 'YELLOW' : 'GREEN') as RiskLevel,
-                lastMessage: t.metadata?.last_message || 'No messages',
-                lastMessageTime: new Date(t.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                status: t.is_locked ? 'LOCKED' : 'OPEN',
-                slaDeadline: t.updated_at, // Mocking SLA
-                isAiSuppressed: t.ownership === 'human'
-            }));
-            setThreads(mapped);
+            if (data) {
+                const patientsList = currentPatients || patients;
+                const mapped: Thread[] = data.map(t => {
+                    const patient = patientsList.find(p => p.id === t.user_id);
+                    return {
+                        id: t.id,
+                        patientId: t.user_id,
+                        patientName: patient?.name || 'Unknown Patient',
+                        riskLevel: (t.status === 'red' ? 'RED' : t.status === 'yellow' ? 'YELLOW' : 'GREEN') as RiskLevel,
+                        lastMessage: t.metadata?.last_message || 'No messages',
+                        lastMessageTime: new Date(t.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        status: t.is_locked ? 'LOCKED' : 'OPEN',
+                        slaDeadline: t.updated_at,
+                        isAiSuppressed: t.ownership === 'human'
+                    };
+                });
+                setThreads(mapped);
+            }
+        } catch (err: any) {
+            console.error('fetchThreads Exception:', err.message);
         }
     };
 
@@ -258,9 +268,11 @@ export function useClinicalData() {
         const loadAll = async () => {
             setLoading(true);
             try {
+                // Fetch patients first to ensure threads can resolve names
+                const fetchedPatients = await fetchPatients();
+                
                 await Promise.allSettled([
-                    fetchPatients(),
-                    fetchThreads(),
+                    fetchThreads(fetchedPatients),
                     fetchAppointments(),
                     fetchLeads(),
                     fetchConsultations(),
