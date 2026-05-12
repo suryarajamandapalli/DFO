@@ -12,12 +12,12 @@ import {
     Clock,
     ShieldCheck
 } from "lucide-react";
-import { Button } from '@/components/ui/button';
-import { Card, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from "@/lib/utils";
+import { Button } from '../ui/button';
+import { Card, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
+import { ScrollArea } from '../ui/scroll-area';
+import { cn } from "../../lib/utils";
 
 interface Message {
     id: string;

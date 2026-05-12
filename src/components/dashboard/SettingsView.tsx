@@ -10,11 +10,11 @@ import {
     Eye,
     Layout
 } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { Label } from '../ui/label';
+import { cn } from '../../lib/utils';
 
 export const SettingsView = () => {
     const [theme, setTheme] = useState('light');

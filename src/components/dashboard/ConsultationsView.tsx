@@ -11,10 +11,10 @@ import {
     Plus,
     FileText
 } from "lucide-react";
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
 import {
     Table,
     TableBody,
@@ -22,9 +22,9 @@ import {
     TableHead,
     TableHeader,
     TableRow
-} from '@/components/ui/table';
-import { Patient } from "@/types";
-import { cn } from "@/lib/utils";
+} from '../ui/table';
+import { Patient } from "../../types";
+import { cn } from "../../lib/utils";
 
 export const ConsultationsView = ({
     patient,

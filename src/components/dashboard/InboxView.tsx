@@ -15,12 +15,12 @@ import {
     MoreHorizontal,
     ArrowLeft
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
+import { ScrollArea } from '../ui/scroll-area';
+import { Separator } from '../ui/separator';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -28,9 +28,9 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Thread, Message } from '@/types';
-import { cn } from '@/lib/utils';
+} from '../ui/dropdown-menu';
+import { Thread, Message } from '../../types';
+import { cn } from '../../lib/utils';
 
 export const InboxView = ({
     threads,

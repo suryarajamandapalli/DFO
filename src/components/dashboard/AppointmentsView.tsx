@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Appointment } from '@/types';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Appointment } from '../../types';
+import { Calendar as CalendarComponent } from '../ui/calendar';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import { Calendar as CalendarIcon, Clock, User, Plus, Video, Phone, MapPin } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 export const AppointmentsView = ({ appointments }: { appointments: Appointment[] }) => {
     const [date, setDate] = useState<Date | undefined>(new Date());

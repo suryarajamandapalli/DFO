@@ -11,11 +11,11 @@ import {
     UserPlus,
     Activity
 } from "lucide-react";
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Thread, Patient, Lead, Appointment, Role } from "@/types";
-import { cn } from "@/lib/utils";
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Thread, Patient, Lead, Appointment, Role } from "../../types";
+import { cn } from "../../lib/utils";
 
 interface RiskMonitorProps {
     patients: Patient[];
