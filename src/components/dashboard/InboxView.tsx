@@ -239,11 +239,6 @@ export const InboxView = ({
                                 </Button>
                             </div>
 
-                            <div className="mt-4 flex items-center justify-center gap-8">
-                                <button className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] hover:text-primary transition-colors"><ShieldCheck className="h-3 w-3" /> Secure E2E</button>
-                                <button className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] hover:text-red-500 transition-colors"><BotOff className="h-3 w-3" /> Disable AI</button>
-                                <button className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] hover:text-primary transition-colors"><MoreHorizontal className="h-3 w-3" /> Templates</button>
-                            </div>
 
                         </div>
                     </>

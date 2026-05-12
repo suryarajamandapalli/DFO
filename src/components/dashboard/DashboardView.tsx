@@ -41,7 +41,7 @@ interface StatItem {
 }
 
 const StatCard = ({ stat, key }: { stat: StatItem, key?: React.Key }) => (
-    <Card key={stat.label} className="border-none shadow-md rounded-2xl bg-white overflow-hidden group hover:shadow-lg transition-all duration-300 ring-1 ring-slate-200/60">
+    <Card key={stat.label} className="border-none shadow-md rounded-2xl bg-card overflow-hidden group hover:shadow-lg transition-all duration-300 ring-1 ring-border">
         <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
                 <div className={cn("p-3 rounded-xl shadow-sm", stat.bg)}>
@@ -49,12 +49,12 @@ const StatCard = ({ stat, key }: { stat: StatItem, key?: React.Key }) => (
                 </div>
             </div>
             <div className="space-y-0.5">
-                <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">{stat.label}</p>
-                <h3 className="text-3xl font-black text-slate-950 tabular-nums tracking-tighter leading-none">{stat.value}</h3>
+                <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">{stat.label}</p>
+                <h3 className="text-3xl font-black text-foreground tabular-nums tracking-tighter leading-none">{stat.value}</h3>
             </div>
             {stat.foot && (
-                <div className="mt-5 flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
-                    <div className="w-1 h-1 rounded-full bg-slate-200" />
+                <div className="mt-5 flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+                    <div className="w-1 h-1 rounded-full bg-border" />
                     {stat.foot}
                 </div>
             )}
@@ -66,24 +66,24 @@ const DashboardHeader = ({ title, sub, profile }: { title: string, sub: string, 
     <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
             <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600 border border-sky-100 shadow-sm">
+                <div className="h-8 w-8 rounded-xl bg-sky-50 dark:bg-sky-500/10 flex items-center justify-center text-sky-600 border border-sky-100 dark:border-sky-500/20 shadow-sm">
                     <Building2 className="h-4 w-4" />
                 </div>
                 <div className="flex flex-col">
-                  <p className="text-xs font-bold text-slate-900 mt-1 uppercase tracking-tight">
+                  <p className="text-xs font-bold text-foreground mt-1 uppercase tracking-tight">
                       {profile?.domain || 'DFO | Janmasethu'}
                   </p>
                 </div>
             </div>
-            <h1 className="text-3xl font-black text-slate-950 tracking-tighter leading-none">{title}</h1>
-            <p className="text-slate-500 font-medium text-sm max-w-xl">{sub}</p>
+            <h1 className="text-3xl font-black text-foreground tracking-tighter leading-none">{title}</h1>
+            <p className="text-muted-foreground font-medium text-sm max-w-xl">{sub}</p>
         </div>
-        <div className="flex items-center gap-3 bg-white p-2.5 rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/10">
-            <div className="h-11 w-11 rounded-xl bg-slate-950 flex items-center justify-center text-white text-lg font-black shadow-lg shadow-slate-950/10">
+        <div className="flex items-center gap-3 bg-card p-2.5 rounded-2xl border border-border shadow-xl">
+            <div className="h-11 w-11 rounded-xl bg-foreground flex items-center justify-center text-background text-lg font-black shadow-lg">
                 {new Date().toLocaleDateString('en-US', { day: '2-digit' })}
             </div>
             <div className="pr-4">
-                <p className="text-sm font-black text-slate-900 tracking-tighter mt-0.5">
+                <p className="text-sm font-black text-foreground tracking-tighter mt-0.5">
                   {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </p>
             </div>

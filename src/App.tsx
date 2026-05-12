@@ -123,7 +123,19 @@ export default function App() {
   const [globalSearch, setGlobalSearch] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
-  // --- Derived Search Results ---
+  // --- Theme & Persistence ---
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('dfo-theme') || 'light';
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    const savedSidebar = localStorage.getItem('dfo-sidebar') || 'full';
+    document.documentElement.setAttribute('data-sidebar', savedSidebar);
+    setCollapsed(savedSidebar === 'slim');
+  }, []);
   const searchResults = React.useMemo(() => {
     if (!globalSearch.trim()) return [];
     const query = globalSearch.toLowerCase();

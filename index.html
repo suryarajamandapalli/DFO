@@ -7,6 +7,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&display=swap" rel="stylesheet">
     <title>DFO | Janmasethu</title>
+    <script>
+      (function() {
+        const theme = localStorage.getItem('dfo-theme') || 'light';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        const sidebar = localStorage.getItem('dfo-sidebar') || 'full';
+        document.documentElement.setAttribute('data-sidebar', sidebar);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

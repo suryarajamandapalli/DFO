@@ -342,7 +342,7 @@ export const PatientDetailView = ({
 
         {/* Medical Profile Dialog */}
         <Dialog open={showProfile} onOpenChange={setShowProfile}>
-            <DialogContent className="max-w-2xl rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-white">
+            <DialogContent className="max-w-2xl rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-card">
                 <DialogHeader className="p-8 bg-slate-950 text-white">
                     <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center">
@@ -359,27 +359,27 @@ export const PatientDetailView = ({
                         <div className="space-y-4">
                             <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Personal Details</h5>
                             <div className="space-y-2">
-                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Name:</span> <span className="font-bold text-slate-900">{patient.name}</span></div>
-                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Age:</span> <span className="font-bold text-slate-900">{patient.age} Years</span></div>
-                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Phone:</span> <span className="font-bold text-slate-900">{patient.phone}</span></div>
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Name:</span> <span className="font-bold text-foreground">{patient.name}</span></div>
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Age:</span> <span className="font-bold text-foreground">{patient.age} Years</span></div>
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Phone:</span> <span className="font-bold text-foreground">{patient.phone}</span></div>
                             </div>
                         </div>
                         <div className="space-y-4">
                             <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Clinical Data</h5>
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Risk Score:</span> <Badge className="bg-emerald-500 font-black">{patient.riskLevel}</Badge></div>
-                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Journey:</span> <span className="font-bold text-slate-900 uppercase text-xs">{patient.journeyStage}</span></div>
+                                <div className="flex justify-between text-sm"><span className="text-slate-500 font-medium">Journey:</span> <span className="font-bold text-foreground uppercase text-xs">{patient.journeyStage}</span></div>
                             </div>
                         </div>
                     </div>
-                    <div className="pt-6 border-t border-slate-100">
+                    <div className="pt-6 border-t border-border">
                         <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Chronic Conditions & History</h5>
-                        <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                        <p className="text-sm text-foreground leading-relaxed font-medium">
                             No significant chronic conditions reported. Patient is currently in the {patient.journeyStage?.replace('_', ' ')} stage. Previous fertility markers indicate normal parameters. Last medical review conducted on Oct 24, 2026.
                         </p>
                     </div>
                     <div className="flex justify-end pt-4">
-                        <Button onClick={() => setShowProfile(false)} className="rounded-xl bg-slate-950 font-bold px-8">Close Profile</Button>
+                        <Button onClick={() => setShowProfile(false)} className="rounded-xl bg-foreground text-background font-bold px-8">Close Profile</Button>
                     </div>
                 </div>
             </DialogContent>
@@ -387,51 +387,46 @@ export const PatientDetailView = ({
 
         {/* Document Preview Dialog (PDF Viewer Style) */}
         <Dialog open={showDocument} onOpenChange={setShowDocument}>
-            <DialogContent className="max-w-[90vw] w-[1200px] h-[90vh] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-slate-800 flex flex-col">
+            <DialogContent className="max-w-[90vw] w-[1200px] h-[90vh] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-muted flex flex-col">
                 {/* Viewer Toolbar */}
-                <DialogHeader className="p-4 bg-slate-900 border-b border-white/5 flex-row items-center justify-between space-y-0 shrink-0">
+                <DialogHeader className="p-4 bg-background border-b border-border flex-row items-center justify-between space-y-0 shrink-0">
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-3">
                             <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center", selectedDoc?.color)}>
                                 {selectedDoc && <selectedDoc.icon className="h-5 w-5" />}
                             </div>
                             <div>
-                                <DialogTitle className="text-white text-sm font-bold tracking-tight">{selectedDoc?.title}.pdf</DialogTitle>
-                                <DialogDescription className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                                <DialogTitle className="text-foreground text-sm font-bold tracking-tight">{selectedDoc?.title}.pdf</DialogTitle>
+                                <DialogDescription className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                     Clinical Document • {selectedDoc?.time}
                                 </DialogDescription>
                             </div>
                         </div>
-                        <Separator orientation="vertical" className="h-8 bg-white/10" />
-                        <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10 rounded-md">
+                        <Separator orientation="vertical" className="h-8 bg-border" />
+                        <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-background rounded-md">
                                 <RefreshCw className="h-4 w-4" />
                             </Button>
-                            <span className="text-[10px] font-black text-white/40 px-3 uppercase tracking-widest border-x border-white/5">Page 1 / 1</span>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10 rounded-md">
+                            <span className="text-[10px] font-black text-muted-foreground px-3 uppercase tracking-widest border-x border-border">Page 1 / 1</span>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-background rounded-md">
                                 <Search className="h-4 w-4" />
                             </Button>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Button variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest gap-2">
+                        <Button variant="outline" className="bg-card border-border hover:bg-muted text-foreground rounded-xl font-bold uppercase text-[10px] tracking-widest gap-2">
                             <Download className="h-4 w-4" /> Export PDF
                         </Button>
-                        <Button variant="ghost" onClick={() => setShowDocument(false)} className="h-10 w-10 text-white/60 hover:text-white rounded-xl p-0">
+                        <Button variant="ghost" onClick={() => setShowDocument(false)} className="h-10 w-10 text-muted-foreground hover:text-foreground rounded-xl p-0">
                             <Plus className="h-6 w-6 rotate-45" />
                         </Button>
                     </div>
                 </DialogHeader>
 
                 {/* Viewer Canvas */}
-                <div className="flex-1 overflow-auto p-12 flex justify-center bg-slate-800/50 scrollbar-hide">
-                    <div className="bg-white w-full max-w-[850px] shadow-2xl min-h-[1100px] p-20 flex flex-col animate-in zoom-in-95 duration-500 origin-top">
+                <div className="flex-1 overflow-auto p-12 flex justify-center bg-muted/50 scrollbar-hide">
+                    <div className="bg-card w-full max-w-[850px] shadow-2xl min-h-[1100px] p-20 flex flex-col animate-in zoom-in-95 duration-500 origin-top text-foreground">
                         {/* PDF Header */}
-                        <div className="flex justify-between border-b-4 border-slate-900 pb-12 mb-12">
-                            <div>
-                                <h1 className="text-4xl font-black tracking-tighter text-slate-900 mb-2">CLINICAL <span className="text-sky-500 uppercase">Report</span></h1>
-                                <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.4em] leading-none">DFO • Janmasethu Healthcare</p>
-                            </div>
                             <div className="text-right">
                                 <div className="bg-slate-900 text-white px-4 py-2 inline-block rounded-lg mb-4">
                                     <p className="text-[9px] font-black uppercase tracking-widest">Document ID</p>
