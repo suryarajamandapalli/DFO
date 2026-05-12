@@ -148,15 +148,6 @@ export function Login({ onSwitchToSignup, onBackToLanding }: { onSwitchToSignup:
           )}
 
           <div className="mt-12 text-center border-t border-slate-50 pt-10">
-            <p className="text-sm text-slate-500 font-medium">
-              Don't have an account?{' '}
-              <button
-                onClick={onSwitchToSignup}
-                className="text-sky-500 font-black uppercase text-[11px] tracking-widest hover:text-sky-600 ml-2"
-              >
-                Sign up
-              </button>
-            </p>
             <button
               onClick={onBackToLanding}
               className="mt-8 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors"

@@ -485,6 +485,7 @@ export default function App() {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-sm animate-pulse">
+               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-sm animate-pulse">
                 <Activity className="h-4 w-4" />
               </div>
 
@@ -552,7 +553,7 @@ export default function App() {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 p-1.5 pr-4 rounded-2xl bg-muted/50 border border-border hover:bg-muted transition-all">
                   <div className="h-9 w-9 rounded-xl bg-foreground flex items-center justify-center text-background text-sm font-black shadow-md">
-                    {profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
+                    {profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div className="hidden lg:block text-left">
                     <p className="text-[11px] font-black text-foreground tracking-tight leading-none truncate max-w-[100px]">
@@ -573,13 +574,25 @@ export default function App() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem className="rounded-lg py-2.5 cursor-pointer">
-                    <User className="mr-3 h-4 w-4" /> 
-                    <span className="font-bold text-sm">Professional Profile</span>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      setActiveTab('Profile');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="rounded-xl h-11 px-4 font-bold text-slate-600 focus:bg-primary focus:text-primary-foreground gap-3 cursor-pointer"
+                  >
+                    <User className="h-4 w-4" /> 
+                    <span className="text-sm">Professional Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="rounded-lg py-2.5 cursor-pointer">
-                    <Settings className="mr-3 h-4 w-4" /> 
-                    <span className="font-bold text-sm">OS Settings</span>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      setActiveTab('Settings');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="rounded-xl h-11 px-4 font-bold text-slate-600 focus:bg-primary focus:text-primary-foreground gap-3 cursor-pointer"
+                  >
+                    <Settings className="h-4 w-4" /> 
+                    <span className="text-sm">OS Settings</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
