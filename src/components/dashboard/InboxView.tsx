@@ -159,206 +159,170 @@ export const InboxView = ({
                 </div>
             </div>
 
-            {/* List & Detail Area */}
-            <div className="flex-1 flex flex-col min-w-0 bg-white">
-                {!selectedThreadId ? (
-                    <>
-                        {/* List Header */}
-                        <div className="h-16 px-6 border-b border-border flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-10">
-                            <div className="flex items-center gap-4">
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
-                                    <Square className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
-                                    <RefreshCw className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </div>
-                            
-                            <div className="flex-1 max-w-md px-10">
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                                    <Input 
-                                        placeholder="Search messages..." 
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-9 h-9 rounded-lg bg-slate-100 border-none text-xs font-bold" 
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">1-50 of {threads.length}</span>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400"><ChevronLeft className="h-4 w-4" /></Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400"><ChevronRight className="h-4 w-4" /></Button>
-                            </div>
+            {/* Split Pane Area */}
+            <div className="flex-1 flex min-w-0 bg-white">
+                
+                {/* Thread List Pane */}
+                <div className={cn(
+                    "flex flex-col border-r border-border bg-white transition-all",
+                    selectedThreadId ? "hidden lg:flex lg:w-96 shrink-0" : "flex-1"
+                )}>
+                    {/* List Header */}
+                    <div className="h-16 px-4 border-b border-border flex items-center justify-between bg-white/80 backdrop-blur-md shrink-0">
+                        <div className="flex-1 relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                            <Input 
+                                placeholder="Search messages..." 
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-9 h-9 rounded-lg bg-slate-100 border-none text-xs font-bold w-full" 
+                            />
                         </div>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 text-slate-400">
+                            <Filter className="h-4 w-4" />
+                        </Button>
+                    </div>
 
-                        {/* Thread List (Gmail Style Rows) */}
-                        <ScrollArea className="flex-1">
-                            <div className="divide-y divide-slate-100">
-                                {filteredThreads.map((thread) => (
-                                    <div
-                                        key={thread.id}
-                                        onClick={() => { setSelectedThreadId(thread.id); fetchMessages(thread.id); }}
-                                        className={cn(
-                                            "flex items-center gap-4 px-6 py-3 cursor-pointer group transition-all",
-                                            thread.status === 'LOCKED' ? "bg-slate-50" : "hover:bg-slate-50"
-                                        )}
-                                    >
-                                        <div className="flex items-center gap-3 shrink-0">
-                                            <Square className="h-4 w-4 text-slate-200 group-hover:text-slate-400 transition-colors" />
-                                            <Star className="h-4 w-4 text-slate-200 hover:text-amber-400 transition-colors" />
-                                        </div>
-
-                                        <div className="w-48 shrink-0">
-                                            <p className={cn(
-                                                "text-sm tracking-tight truncate",
-                                                thread.status === 'OPEN' ? "font-black text-slate-900" : "font-bold text-slate-600"
-                                            )}>
-                                                {thread.patientName}
-                                            </p>
-                                        </div>
-
-                                        <div className="flex-1 min-w-0 flex items-center gap-3">
-                                            {thread.riskLevel === 'RED' && <Badge className="bg-red-50 text-red-600 border-red-100 text-[8px] font-black uppercase tracking-widest">Urgent</Badge>}
-                                            <p className="text-sm text-slate-500 truncate font-medium">
-                                                <span className="text-slate-900 font-bold mr-2">{thread.patientName} Case</span>
-                                                {thread.lastMessage}
-                                            </p>
-                                        </div>
-
-                                        <div className="flex items-center gap-4 shrink-0">
-                                            {thread.isAiSuppressed && <Paperclip className="h-3.5 w-3.5 text-slate-300" />}
-                                            <span className="text-[10px] font-black text-slate-400 tabular-nums uppercase tracking-widest">
-                                                {thread.lastMessageTime}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                                {filteredThreads.length === 0 && (
-                                    <div className="p-20 text-center">
-                                        <InboxIcon className="h-12 w-12 text-slate-200 mx-auto mb-4" />
-                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No matching threads found</p>
-                                    </div>
-                                )}
-                            </div>
-                        </ScrollArea>
-                    </>
-                ) : (
-                    <>
-                        {/* Detail Header (Gmail Style Actions) */}
-                        <div className="h-16 px-6 border-b border-border flex items-center justify-between bg-white sticky top-0 z-10">
-                            <div className="flex items-center gap-3">
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-9 w-9 rounded-xl"
-                                    onClick={() => setSelectedThreadId(null)}
+                    {/* Thread List Rows */}
+                    <ScrollArea className="flex-1">
+                        <div className="divide-y divide-slate-100">
+                            {filteredThreads.map((thread) => (
+                                <div
+                                    key={thread.id}
+                                    onClick={() => { setSelectedThreadId(thread.id); fetchMessages(thread.id); }}
+                                    className={cn(
+                                        "flex flex-col gap-2 px-5 py-4 cursor-pointer group transition-all border-l-4",
+                                        selectedThreadId === thread.id ? "bg-primary/5 border-primary" : "border-transparent hover:bg-slate-50"
+                                    )}
                                 >
-                                    <ArrowLeft className="h-4 w-4" />
-                                </Button>
-                                <Separator orientation="vertical" className="h-6 mx-2" />
-                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-500 hover:text-slate-900"><Archive className="h-4 w-4" /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-500 hover:text-slate-900"><AlertCircle className="h-4 w-4" /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-500 hover:text-slate-900"><Trash2 className="h-4 w-4" /></Button>
-                                <Separator orientation="vertical" className="h-6 mx-2" />
-                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-500 hover:text-slate-900"><Mail className="h-4 w-4" /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-500 hover:text-slate-900"><RefreshCw className="h-4 w-4" /></Button>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">1 of 1</span>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400"><ChevronLeft className="h-4 w-4" /></Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400"><ChevronRight className="h-4 w-4" /></Button>
-                            </div>
-                        </div>
-
-                        {/* Message View (Gmail Conversation Style) */}
-                        <ScrollArea className="flex-1 bg-white">
-                            <div className="p-8 max-w-5xl mx-auto space-y-8">
-                                <div className="space-y-4">
-                                    <h2 className="text-2xl font-black text-slate-950 tracking-tighter">Clinical Inquiry: {selectedThread?.patientName || 'Unknown Patient'}</h2>
-                                    <div className="flex items-center gap-3">
-                                        <Badge className="bg-slate-100 text-slate-600 border-none text-[8px] font-black uppercase tracking-widest px-3 py-1">Inbox</Badge>
-                                        <Badge className={cn(
-                                            "text-[8px] font-black uppercase tracking-widest px-3 py-1",
-                                            selectedThread?.riskLevel === 'RED' ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
+                                    <div className="flex items-center justify-between">
+                                        <p className={cn(
+                                            "text-sm tracking-tight truncate",
+                                            thread.status === 'OPEN' ? "font-black text-slate-900" : "font-bold text-slate-600"
                                         )}>
-                                            {selectedThread?.riskLevel || 'NORMAL'} Case
-                                        </Badge>
+                                            {thread.patientName}
+                                        </p>
+                                        <span className="text-[10px] font-black text-slate-400 tabular-nums uppercase tracking-widest shrink-0">
+                                            {thread.lastMessageTime}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {thread.riskLevel === 'RED' && <Badge className="bg-red-50 text-red-600 border-none text-[8px] font-black uppercase tracking-widest px-1.5 py-0">Urgent</Badge>}
+                                        <p className="text-xs text-slate-500 truncate font-medium flex-1">
+                                            {thread.lastMessage}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                            {filteredThreads.length === 0 && (
+                                <div className="p-10 text-center">
+                                    <InboxIcon className="h-8 w-8 text-slate-200 mx-auto mb-3" />
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No threads found</p>
+                                </div>
+                            )}
+                        </div>
+                    </ScrollArea>
+                </div>
+
+                {/* Message Detail Pane */}
+                <div className={cn(
+                    "flex-1 flex-col min-w-0 bg-white",
+                    !selectedThreadId ? "hidden lg:flex items-center justify-center bg-slate-50/30" : "flex"
+                )}>
+                    {!selectedThreadId ? (
+                        <div className="text-center opacity-50">
+                            <InboxIcon className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                            <h3 className="text-lg font-black text-slate-900">Select an item to read</h3>
+                            <p className="text-sm font-bold text-slate-500 mt-1">Nothing is selected</p>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Detail Header */}
+                            <div className="h-16 px-6 border-b border-border flex items-center justify-between bg-white shrink-0">
+                                <div className="flex items-center gap-3">
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="h-9 w-9 rounded-xl lg:hidden mr-2"
+                                        onClick={() => setSelectedThreadId(null)}
+                                    >
+                                        <ArrowLeft className="h-4 w-4" />
+                                    </Button>
+                                    <div className="flex flex-col">
+                                        <h3 className="font-black text-slate-900 leading-none">{selectedThread?.patientName || 'Patient Case'}</h3>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-primary mt-1">{selectedThread?.riskLevel || 'NORMAL'} Priority</span>
                                     </div>
                                 </div>
 
-                                <div className="space-y-10">
+                                <div className="flex items-center gap-2">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl text-slate-400 hover:text-amber-500"><Star className="h-4 w-4" /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl text-slate-400 hover:text-primary"><Archive className="h-4 w-4" /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl text-slate-400 hover:text-red-500"><Trash2 className="h-4 w-4" /></Button>
+                                    <Separator orientation="vertical" className="h-6 mx-2 hidden sm:block" />
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl text-slate-400 hidden sm:flex"><MoreVertical className="h-4 w-4" /></Button>
+                                </div>
+                            </div>
+
+                            {/* Messages Area */}
+                            <ScrollArea className="flex-1 bg-slate-50/50">
+                                <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
                                     {currentMessages.map((msg, i) => (
-                                        <div key={msg.id} className="group border border-slate-100 rounded-[2.5rem] p-8 hover:shadow-xl hover:shadow-slate-200/50 transition-all bg-white relative">
-                                            <div className="flex items-start justify-between mb-6">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-12 w-12 rounded-2xl bg-slate-950 flex items-center justify-center text-white text-lg font-black shadow-lg">
+                                        <div key={msg.id} className="group border border-slate-100 rounded-3xl p-6 hover:shadow-lg hover:shadow-slate-200/40 transition-all bg-white relative">
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-10 w-10 rounded-xl bg-slate-950 flex items-center justify-center text-white text-sm font-black shadow-md">
                                                         {msg.senderName?.charAt(0) || 'P'}
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm font-black text-slate-900">{msg.senderName} <span className="text-slate-400 font-bold ml-2"> &lt;{msg.senderType.toLowerCase()}@janmasethu.com&gt;</span></p>
-                                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">to Clinical Care System</p>
+                                                        <p className="text-sm font-black text-slate-900">{msg.senderName}</p>
+                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{msg.senderType}</p>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{msg.timestamp}</p>
-                                                    <div className="flex items-center gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Star className="h-4 w-4 text-slate-300 cursor-pointer hover:text-amber-400" />
-                                                        <RefreshCw className="h-4 w-4 text-slate-300 cursor-pointer hover:text-primary" />
-                                                        <MoreVertical className="h-4 w-4 text-slate-300 cursor-pointer" />
-                                                    </div>
-                                                </div>
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{msg.timestamp}</p>
                                             </div>
-
-                                            <div className="pl-16">
-                                                <p className="text-base text-slate-700 leading-relaxed font-medium whitespace-pre-wrap">
+                                            <div className="pl-14">
+                                                <p className="text-sm text-slate-700 leading-relaxed font-medium whitespace-pre-wrap">
                                                     {msg.content}
                                                 </p>
                                             </div>
                                         </div>
                                     ))}
-                                    <div ref={messagesEndRef} />
+                                    <div ref={messagesEndRef} className="h-4" />
                                 </div>
-                            </div>
-                        </ScrollArea>
+                            </ScrollArea>
 
-                        {/* Reply Area (Gmail Style Quick Reply) */}
-                        <div className="p-6 bg-slate-50 border-t border-slate-100">
-                            <div className="max-w-5xl mx-auto rounded-[2.5rem] bg-white border border-slate-200 p-2 shadow-2xl focus-within:ring-4 focus-within:ring-primary/10 transition-all">
-                                <div className="px-6 py-4">
-                                    <textarea
-                                        placeholder="Click here to reply to the patient..."
-                                        value={replyText}
-                                        onChange={(e) => setReplyText(e.target.value)}
-                                        className="w-full bg-transparent border-none focus:ring-0 text-sm font-bold placeholder:text-slate-300 min-h-[100px] resize-none"
-                                    />
-                                </div>
-                                <div className="flex items-center justify-between p-2 border-t border-slate-50">
-                                    <div className="flex items-center gap-1">
-                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-400"><Plus className="h-5 w-5" /></Button>
-                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-400" onClick={() => fileInputRef.current?.click()}>
-                                            <Paperclip className="h-4 w-4" />
-                                        </Button>
-                                        <input type="file" className="hidden" ref={fileInputRef} />
+                            {/* Reply Area */}
+                            <div className="p-4 md:p-6 bg-white border-t border-slate-100 shrink-0">
+                                <div className="max-w-4xl mx-auto rounded-3xl bg-slate-50 border border-slate-200 p-1.5 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                                    <div className="px-5 py-3">
+                                        <textarea
+                                            placeholder="Type your reply to the patient..."
+                                            value={replyText}
+                                            onChange={(e) => setReplyText(e.target.value)}
+                                            className="w-full bg-transparent border-none focus:ring-0 text-sm font-bold placeholder:text-slate-400 min-h-[80px] resize-none outline-none"
+                                        />
                                     </div>
-                                    <Button
-                                        onClick={handleSend}
-                                        disabled={isSending || !replyText.trim()}
-                                        className="h-12 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 gap-3"
-                                    >
-                                        {isSending ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                                        Send Message
-                                    </Button>
+                                    <div className="flex items-center justify-between p-1.5">
+                                        <div className="flex items-center gap-1">
+                                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-200" onClick={() => fileInputRef.current?.click()}>
+                                                <Paperclip className="h-4 w-4" />
+                                            </Button>
+                                            <input type="file" className="hidden" ref={fileInputRef} />
+                                        </div>
+                                        <Button
+                                            onClick={handleSend}
+                                            disabled={isSending || !replyText.trim()}
+                                            className="h-10 px-6 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-primary/20 gap-2"
+                                        >
+                                            {isSending ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                                            Reply
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </>
-                )}
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );
