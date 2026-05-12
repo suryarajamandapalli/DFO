@@ -119,7 +119,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [collapsed, setCollapsed] = useState(false);
   const [role, setRole] = useState<Role>('DOCTOR');
-  const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
   const [patientSearch, setPatientSearch] = useState('');
   const [globalSearch, setGlobalSearch] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -449,11 +448,7 @@ export default function App() {
 
 
           <div className="flex items-center gap-4">
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              
-            </div>
-
+            
             <DropdownMenu>
               <DropdownMenuTrigger className="relative h-10 w-10 rounded-xl bg-white border border-slate-100 hover:border-slate-300 flex items-center justify-center outline-none transition-all group">
                 <Bell className="h-4.5 w-4.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
@@ -591,29 +586,6 @@ export default function App() {
           </AnimatePresence>
         </main>
 
-        <button
-          onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
-          className={cn(
-            "fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 transform hover:scale-110 active:scale-95 group overflow-hidden",
-            isAiPanelOpen ? "bg-slate-900 border-white/10" : "bg-primary border-primary/20"
-          )}
-        >
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none" />
-          <Bot className={cn("h-7 w-7 transition-all duration-500",
-            isAiPanelOpen ? "text-white rotate-[360deg] scale-0" : "text-primary-foreground"
-          )} />
-          <X className={cn("absolute h-7 w-7 text-white transition-all duration-500",
-            isAiPanelOpen ? "opacity-100 rotate-0" : "opacity-0 rotate-90 scale-0"
-          )} />
-        </button>
-
-        <ClinicalAssistant
-          isOpen={isAiPanelOpen}
-          onClose={() => setIsAiPanelOpen(false)}
-          appointments={appointments}
-          consultations={consultations}
-          patients={patients}
-        />
       </div>
     </div>
   );
