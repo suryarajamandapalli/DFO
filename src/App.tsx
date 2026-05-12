@@ -174,12 +174,6 @@ export default function App() {
   };
 
 
-  const [notifications, setNotifications] = useState([
-    { id: '1', title: 'Critical SLA Breach', desc: 'Patient Anya (RED) awaiting response for 22 mins.', time: '2m ago', level: 'RED', isRead: false },
-    { id: '2', title: 'New Appointment', desc: 'Siddharth booked for 4:00 PM today.', time: '15m ago', level: 'BLUE', isRead: false },
-    { id: '3', title: 'Vital Sign Alert', desc: 'Abhilasha (YELLOW) logged high BP trend.', time: '1h ago', level: 'YELLOW', isRead: true },
-  ]);
-
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   // Sync role from profile

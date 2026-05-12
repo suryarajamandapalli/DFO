@@ -16,8 +16,11 @@ import {
     Thermometer,
     FileSignature,
     Edit2,
-    MessageSquare
+    MessageSquare,
+    CheckCircle2,
+    RefreshCw
 } from 'lucide-react';
+import { Separator } from '../ui/separator';
 import { triggerCall, triggerWhatsApp, triggerSmartCall } from '../../lib/communication';
 
 
