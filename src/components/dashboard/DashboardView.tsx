@@ -25,33 +25,44 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Role, Patient, Thread, Lead, Appointment } from '@/types';
+import { Role, Patient, Thread, Lead, Appointment, Consultation } from '../../types';
+import { UserProfile } from '../../contexts/AuthContext';
 import { cn } from '@/lib/utils';
 
 // --- Sub-components for Dashboard ---
 
-const StatCard = ({ stat }: { stat: any }) => (
+interface StatItem {
+    label: string;
+    value: number | string;
+    icon: any;
+    color: string;
+    bg: string;
+    foot: string;
+}
+
+const StatCard = ({ stat, key }: { stat: StatItem, key?: React.Key }) => (
     <Card key={stat.label} className="border-none shadow-sm rounded-2xl bg-white overflow-hidden group hover:shadow-md transition-all duration-300 ring-1 ring-slate-100">
         <CardContent className="p-6">
             <div className="flex items-center justify-between mb-5">
                 <div className={cn("p-3 rounded-xl shadow-sm", stat.bg)}>
                     <stat.icon className={cn("h-5 w-5", stat.color)} />
                 </div>
-                <Badge variant="outline" className="text-[8px] font-black tracking-widest uppercase px-1.5 py-0.5 bg-slate-50 border-slate-100 text-slate-400">Telemetry</Badge>
             </div>
             <div className="space-y-0.5">
                 <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">{stat.label}</p>
                 <h3 className="text-3xl font-black text-slate-950 tabular-nums tracking-tighter leading-none">{stat.value}</h3>
             </div>
-            <div className="mt-5 flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
-                <div className="w-1 h-1 rounded-full bg-slate-200" />
-                {stat.foot}
-            </div>
+            {stat.foot && (
+                <div className="mt-5 flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
+                    <div className="w-1 h-1 rounded-full bg-slate-200" />
+                    {stat.foot}
+                </div>
+            )}
         </CardContent>
     </Card>
 );
 
-const DashboardHeader = ({ title, sub, profile }: { title: string, sub: string, profile: any }) => (
+const DashboardHeader = ({ title, sub, profile }: { title: string, sub: string, profile: UserProfile | null }) => (
     <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
             <div className="flex items-center gap-2.5">
@@ -59,9 +70,6 @@ const DashboardHeader = ({ title, sub, profile }: { title: string, sub: string, 
                     <Building2 className="h-4 w-4" />
                 </div>
                 <div className="flex flex-col">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-sky-500 leading-none">
-                      Operational Environment
-                  </p>
                   <p className="text-xs font-bold text-slate-900 mt-1 uppercase tracking-tight">
                       {profile?.domain || 'DFO CLINIC MAIN'}
                   </p>
@@ -75,7 +83,6 @@ const DashboardHeader = ({ title, sub, profile }: { title: string, sub: string, 
                 {new Date().toLocaleDateString('en-US', { day: '2-digit' })}
             </div>
             <div className="pr-4">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">System Chronology</p>
                 <p className="text-sm font-black text-slate-900 tracking-tighter mt-0.5">
                   {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </p>
@@ -84,7 +91,7 @@ const DashboardHeader = ({ title, sub, profile }: { title: string, sub: string, 
     </div>
 );
 
-const CRODashboard = ({ patients, leads, appointments, consultations = [], profile }: { patients: Patient[], leads: Lead[], appointments: Appointment[], consultations?: any[], profile: any }) => {
+const CRODashboard = ({ patients, leads, appointments, consultations = [], profile }: { patients: Patient[], leads: Lead[], appointments: Appointment[], consultations?: Consultation[], profile: UserProfile | null }) => {
     const [isOptimizing, setIsOptimizing] = React.useState(false);
     const [isOptimized, setIsOptimized] = React.useState(false);
 
@@ -119,18 +126,18 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
         { name: 'Converted', v: convertedLeadsCount || 0 }
     ];
 
-    const stats = [
-        { label: 'Total Leads', value: leads.length, icon: UserPlus, color: 'text-amber-600', bg: 'bg-amber-50', foot: 'In leads table' },
-        { label: 'Total Patients', value: patients.length, icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50', foot: 'In patients table' },
-        { label: 'Total Consultations', value: consultations.length, icon: MessageSquare, color: 'text-rose-600', bg: 'bg-rose-50', foot: 'In consultations table' },
-        { label: 'Total Appointments', value: appointments.length, icon: Calendar, color: 'text-emerald-600', bg: 'bg-emerald-50', foot: 'In appointments table' },
+    const stats: StatItem[] = [
+        { label: 'Total Leads', value: leads.length, icon: UserPlus, color: 'text-amber-600', bg: 'bg-amber-50', foot:""},
+        { label: 'Total Patients', value: patients.length, icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50', foot:""},
+        { label: 'Total Consultations', value: consultations.length, icon: MessageSquare, color: 'text-rose-600', bg: 'bg-rose-50', foot:""},
+        { label: 'Total Appointments', value: appointments.length, icon: Calendar, color: 'text-emerald-600', bg: 'bg-emerald-50', foot:""},
     ];
 
     return (
         <div className="space-y-8 p-6 lg:p-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <DashboardHeader 
                 title="Clinical Oversight" 
-                sub="High-precision command and conversion intelligence for clinical acquisition." 
+                sub="" 
                 profile={profile} 
             />
 
@@ -201,7 +208,7 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
     );
 };
 
-const DoctorDashboard = ({ threads, appointments, patients, consultations = [], profile }: { threads: Thread[], appointments: Appointment[], patients: Patient[], consultations?: any[], profile: any }) => (
+const DoctorDashboard = ({ threads, appointments, patients, consultations = [], profile }: { threads: Thread[], appointments: Appointment[], patients: Patient[], consultations?: Consultation[], profile: UserProfile | null }) => (
     <div className="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <DashboardHeader 
             title="Attending Physician" 
@@ -215,7 +222,7 @@ const DoctorDashboard = ({ threads, appointments, patients, consultations = [], 
                 { label: 'Critical Cases', value: threads.filter(t => t.riskLevel === 'RED').length, icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50', foot: 'Immediate attention' },
                 { label: 'Appointments', value: appointments.length, icon: Calendar, color: 'text-sky-600', bg: 'bg-sky-50', foot: 'Total scheduled' },
                 { label: 'Total Patients', value: patients.length, icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50', foot: 'Under your care' },
-            ].map((stat, i) => (
+            ].map((stat: StatItem, i) => (
                 <StatCard key={i} stat={stat} />
             ))}
         </div>
@@ -243,7 +250,9 @@ const DoctorDashboard = ({ threads, appointments, patients, consultations = [], 
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-foreground group-hover:text-primary transition-colors">{thread.patientName}</h4>
-                                        <p className="text-xs font-black text-muted-foreground uppercase tracking-tighter mt-0.5">SLA: {thread.slaDeadline}</p>
+                                        <p className="text-xs font-black text-muted-foreground uppercase tracking-tighter mt-0.5">
+                                            SLA: {new Date(thread.slaDeadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </p>
                                     </div>
 
                                 </div>
@@ -280,7 +289,7 @@ const DoctorDashboard = ({ threads, appointments, patients, consultations = [], 
     </div>
 );
 
-const NurseDashboard = ({ patients, appointments, profile }: { patients: Patient[], appointments: Appointment[], profile: any }) => (
+const NurseDashboard = ({ patients, appointments, profile }: { patients: Patient[], appointments: Appointment[], profile: UserProfile | null }) => (
     <div className="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <DashboardHeader 
             title="Triage Station" 
@@ -294,7 +303,7 @@ const NurseDashboard = ({ patients, appointments, profile }: { patients: Patient
                 { label: 'Vitals Logged', value: 12, icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50', foot: 'Today' },
                 { label: 'Lab Samples', value: 4, icon: TrendingUp, color: 'text-sky-600', bg: 'bg-sky-50', foot: 'Pending collection' },
                 { label: 'Task List', value: 8, icon: LayoutDashboard, color: 'text-amber-600', bg: 'bg-amber-50', foot: 'Incomplete tasks' },
-            ].map((stat, i) => (stat && !stat.label.includes('undefined') && <StatCard key={i} stat={stat} />))}
+            ].map((stat: StatItem, i) => (stat && <StatCard key={i} stat={stat} />))}
         </div>
 
         <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
@@ -363,9 +372,9 @@ interface DashboardViewProps {
     threads: Thread[];
     leads: Lead[];
     appointments: Appointment[];
-    consultations?: any[];
+    consultations?: Consultation[];
     role: Role;
-    profile: any;
+    profile: UserProfile | null;
 }
 
 export const DashboardView = ({ patients, threads, leads, appointments, consultations, role, profile }: DashboardViewProps) => {
@@ -381,23 +390,3 @@ export const DashboardView = ({ patients, threads, leads, appointments, consulta
         );
     }
 };
-
-// Custom Icon for stats
-const Globe = (props: any) => (
-    <svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-    >
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-        <path d="M2 12h20" />
-    </svg>
-);
