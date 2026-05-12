@@ -43,7 +43,7 @@ export const ProfileView = ({ profile, user, role, onSignOut }: ProfileViewProps
                 </div>
                 <div className="flex items-center gap-3">
                     <Badge variant="outline" className="h-10 px-6 rounded-xl border-border bg-card font-black uppercase text-[10px] tracking-widest">
-                        ID: {user.id?.slice(0, 8).toUpperCase()}
+                        ID: {user?.id ? user.id.slice(0, 8).toUpperCase() : 'GS-PRO'}
                     </Badge>
                 </div>
             </div>

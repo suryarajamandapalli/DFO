@@ -72,6 +72,19 @@ export const InboxView = ({
     const selectedThread = threads.find(t => t.id === selectedThreadId);
     const currentMessages = selectedThreadId ? messages[selectedThreadId] || [] : [];
 
+    if (selectedThreadId && !selectedThread) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full p-20 text-center">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-xl font-bold">Thread Not Found</h3>
+                <p className="text-muted-foreground mt-2">The selected conversation could not be retrieved.</p>
+                <Button variant="outline" className="mt-6" onClick={() => setSelectedThreadId(null)}>
+                    Back to Inbox
+                </Button>
+            </div>
+        );
+    }
+
     const handleSend = async () => {
         if (selectedThreadId && replyText.trim()) {
             setIsSending(true);
@@ -267,14 +280,14 @@ export const InboxView = ({
                         <ScrollArea className="flex-1 bg-white">
                             <div className="p-8 max-w-5xl mx-auto space-y-8">
                                 <div className="space-y-4">
-                                    <h2 className="text-2xl font-black text-slate-950 tracking-tighter">Clinical Inquiry: {selectedThread.patientName}</h2>
+                                    <h2 className="text-2xl font-black text-slate-950 tracking-tighter">Clinical Inquiry: {selectedThread?.patientName || 'Unknown Patient'}</h2>
                                     <div className="flex items-center gap-3">
                                         <Badge className="bg-slate-100 text-slate-600 border-none text-[8px] font-black uppercase tracking-widest px-3 py-1">Inbox</Badge>
                                         <Badge className={cn(
                                             "text-[8px] font-black uppercase tracking-widest px-3 py-1",
-                                            selectedThread.riskLevel === 'RED' ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
+                                            selectedThread?.riskLevel === 'RED' ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
                                         )}>
-                                            {selectedThread.riskLevel} Case
+                                            {selectedThread?.riskLevel || 'NORMAL'} Case
                                         </Badge>
                                     </div>
                                 </div>
