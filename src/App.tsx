@@ -483,7 +483,10 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-6">
-
+            <div className="flex items-center gap-2">
+               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-sm animate-pulse">
+                <Activity className="h-4 w-4" />
+              </div>
 
             </div>
 

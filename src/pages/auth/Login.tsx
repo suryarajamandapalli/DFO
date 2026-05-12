@@ -112,7 +112,6 @@ export function Login({ onSwitchToSignup, onBackToLanding }: { onSwitchToSignup:
               <div className="space-y-2">
                 <div className="flex justify-between items-center ml-1">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Password</label>
-                  <button type="button" className="text-[10px] font-black uppercase tracking-widest text-sky-500 hover:text-sky-600">Forgot?</button>
                 </div>
                 <div className="relative">
                   <input
