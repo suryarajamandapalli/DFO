@@ -53,15 +53,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .eq('id', user.id)
       .single();
 
-    if (profileError) {
+    if (profileError && profileError.code !== 'PGRST116') {
       console.error("Profile fetch error:", profileError.message);
     }
 
-    if (profileData) {
+    if (profileData?.role) {
       setProfile(profileData);
-      setOnboardingState(profileData.role ? ({ completed: true } as any) : null);
+      setOnboardingState({ completed: true } as any);
     } else {
-      setProfile(null);
+      // Auto-assign role based on email if missing
+      const email = user.email?.toLowerCase() || '';
+      let autoRole: AppRole | null = null;
+      if (email.includes('cro')) autoRole = 'cro';
+      else if (email.includes('nurse')) autoRole = 'nurse';
+      else if (email.includes('doctor')) autoRole = 'doctor';
+
+      if (autoRole) {
+        console.log(`Auto-assigning role ${autoRole} based on email ${email}`);
+        const { data: newProfile, error: upsertError } = await supabase
+          .from('users')
+          .upsert({
+            id: user.id,
+            role: autoRole,
+            email: user.email,
+            domain: 'DFO Clinical Node',
+            full_name: user.user_metadata?.full_name || email.split('@')[0] || 'Clinical Member'
+          }, { onConflict: 'id' })
+          .select()
+          .single();
+
+        if (!upsertError && newProfile) {
+          setProfile(newProfile);
+          setOnboardingState({ completed: true } as any);
+          return;
+        }
+      }
+
+      setProfile(profileData || null);
       setOnboardingState(null);
     }
   };
