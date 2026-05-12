@@ -184,7 +184,7 @@ export const InboxView = ({
                     </div>
 
                     {/* Thread List Rows */}
-                    <ScrollArea className="flex-1">
+                    <div className="flex-1 overflow-y-auto min-h-0">
                         <div className="divide-y divide-slate-100">
                             {filteredThreads.map((thread) => (
                                 <div
@@ -221,7 +221,7 @@ export const InboxView = ({
                                 </div>
                             )}
                         </div>
-                    </ScrollArea>
+                    </div>
                 </div>
 
                 {/* Message Detail Pane */}
@@ -264,7 +264,7 @@ export const InboxView = ({
                             </div>
 
                             {/* Messages Area */}
-                            <ScrollArea className="flex-1 bg-slate-50/50">
+                            <div className="flex-1 overflow-y-auto min-h-0 bg-slate-50/50">
                                 <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
                                     {currentMessages.map((msg, i) => (
                                         <div key={msg.id} className="group border border-slate-100 rounded-3xl p-6 hover:shadow-lg hover:shadow-slate-200/40 transition-all bg-white relative">
@@ -289,7 +289,7 @@ export const InboxView = ({
                                     ))}
                                     <div ref={messagesEndRef} className="h-4" />
                                 </div>
-                            </ScrollArea>
+                            </div>
 
                             {/* Reply Area */}
                             <div className="p-4 md:p-6 bg-white border-t border-slate-100 shrink-0">
