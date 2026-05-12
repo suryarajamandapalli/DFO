@@ -12,7 +12,7 @@ export function Footer() {
               <div className="bg-slate-950 p-2.5 rounded-xl text-white shadow-xl shadow-slate-950/20">
                 <Stethoscope className="w-5 h-5 flex-shrink-0" />
               </div>
-              <span className="text-2xl font-black text-slate-950 tracking-tighter">DFO<span className="text-sky-500">CLINIC.</span></span>
+              <span className="text-2xl font-black text-slate-950 tracking-tighter">DFO | <span className="text-sky-500">Janmasethu</span></span>
             </div>
             <p className="text-slate-500 text-[15px] font-medium leading-[1.8] mb-10">
               The clinical intelligence layer for modern parenthood care. Empowering healthcare providers with automated triaging, risk telemetry, and unified operations.
@@ -72,7 +72,7 @@ export function Footer() {
         
         <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-            <p>© {new Date().getFullYear()} DFO CLINIC OS. PLATFORM V2.0.4</p>
+            <p>© {new Date().getFullYear()} DFO | Janmasethu. PLATFORM V2.0.4</p>
             <div className="flex gap-8">
               <a href="#" className="hover:text-slate-950 transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-slate-950 transition-colors">Internal Governance</a>

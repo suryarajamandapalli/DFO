@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
 import { Stethoscope, Menu, X, LogOut, ChevronRight, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -41,7 +41,7 @@ export function Navbar({ onLogin, onSignup }: { onLogin: () => void, onSignup: (
             </div>
             <div className="flex flex-col">
               <span className="text-lg md:text-xl font-black tracking-tighter leading-none text-slate-900">
-                DFO<span className="text-sky-500"> CLINIC.</span>
+                DFO | <span className="text-sky-500">Janmasethu</span>
               </span>
               <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">Clinical OS v2.0</span>
             </div>

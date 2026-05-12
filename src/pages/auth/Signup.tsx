@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { Button } from '@/components/ui/button';
+import { Button } from '../../components/ui/button';
 import { motion } from 'motion/react';
 import { Stethoscope, AlertCircle, CheckCircle2, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';

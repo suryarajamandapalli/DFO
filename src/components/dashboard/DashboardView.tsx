@@ -22,12 +22,12 @@ import {
     Pie,
     Cell
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import { Role, Patient, Thread, Lead, Appointment, Consultation } from '../../types';
 import { UserProfile } from '../../contexts/AuthContext';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 // --- Sub-components for Dashboard ---
 
@@ -71,7 +71,7 @@ const DashboardHeader = ({ title, sub, profile }: { title: string, sub: string, 
                 </div>
                 <div className="flex flex-col">
                   <p className="text-xs font-bold text-slate-900 mt-1 uppercase tracking-tight">
-                      {profile?.domain || 'DFO CLINIC MAIN'}
+                      {profile?.domain || 'DFO | Janmasethu'}
                   </p>
                 </div>
             </div>
@@ -92,20 +92,6 @@ const DashboardHeader = ({ title, sub, profile }: { title: string, sub: string, 
 );
 
 const CRODashboard = ({ patients, leads, appointments, consultations = [], profile }: { patients: Patient[], leads: Lead[], appointments: Appointment[], consultations?: Consultation[], profile: UserProfile | null }) => {
-    const [isOptimizing, setIsOptimizing] = React.useState(false);
-    const [isOptimized, setIsOptimized] = React.useState(false);
-
-    const handleOptimize = () => {
-        setIsOptimizing(true);
-        // Simulate pipeline optimization algorithm (e.g., pruning dead leads, syncing CRMs)
-        setTimeout(() => {
-            setIsOptimizing(false);
-            setIsOptimized(true);
-            setTimeout(() => setIsOptimized(false), 3000);
-        }, 2500);
-    };
-
-    // Generate real inflow data (last 5 days)
     const today = new Date();
     const data = Array.from({ length: 5 }).map((_, i) => {
         const d = new Date(today);
@@ -113,9 +99,7 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
         const dayStr = d.toISOString().split('T')[0];
         const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
 
-        // Count real patients registered on this day, fallback to 0
         const count = patients.filter(p => p.lastVisit && p.lastVisit.startsWith(dayStr)).length;
-        // If data is entirely empty because it's mock db, we can let it be 0 to show "real" empty state
         return { name: dayName, patients: count };
     });
 
@@ -146,7 +130,7 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
             </div>
 
             <div className="grid gap-6 md:grid-cols-7">
-                <Card className="md:col-span-4 border-none shadow-sm rounded-2xl bg-white ring-1 ring-slate-100">
+                <Card className="md:col-span-7 border-none shadow-sm rounded-2xl bg-white ring-1 ring-slate-100">
 
                     <CardHeader className="p-7 pb-0">
                         <CardTitle className="text-lg font-black text-slate-950 tracking-tight">Patient Inflow Analytics</CardTitle>
@@ -160,47 +144,6 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
                                 <Bar dataKey="patients" fill="#0f172a" radius={[8, 8, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-                <Card className="md:col-span-3 border-none shadow-lg rounded-2xl bg-slate-950 text-white overflow-hidden relative">
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-sky-500/10 blur-[80px] rounded-full -mr-24 -mt-24" />
-                    <CardHeader className="p-7">
-                        <CardTitle className="text-lg font-black tracking-tight">Lead Distribution</CardTitle>
-                        <CardDescription className="text-[10px] font-black uppercase tracking-widest text-white/40 mt-1">Conversion pipeline health.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="px-7 pb-7 flex flex-col items-center justify-center relative z-10">
-                        <div className="h-[180px] w-full flex items-center justify-center relative">
-                            <div className="absolute inset-0 flex items-center justify-center flex-col">
-                                <p className="text-4xl font-black tracking-tighter">{activeLeadsCount}</p>
-                                <p className="text-[8px] uppercase font-black tracking-widest text-white/30">Active Leads</p>
-                            </div>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie data={leadsPieData} innerRadius={60} outerRadius={75} dataKey="v" stroke="none">
-                                        <Cell fill="#38bdf8" />
-                                        <Cell fill="#10b981" />
-                                    </Pie>
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <Button
-                            onClick={handleOptimize}
-                            disabled={isOptimizing || isOptimized}
-                            className={cn(
-                                "w-full mt-4 rounded-xl h-11 font-black uppercase text-[10px] tracking-widest transition-all duration-500 shadow-xl",
-                                 isOptimized
-                                    ? "bg-emerald-500 text-white hover:bg-emerald-500"
-                                    : "bg-white text-slate-950 hover:bg-slate-50"
-                            )}>
-
-                            {isOptimizing ? (
-                                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Algorithm Running...</>
-                            ) : isOptimized ? (
-                                <><CheckCircle2 className="mr-2 h-4 w-4" /> Pipeline Optimized</>
-                            ) : (
-                                "Optimize Pipeline"
-                            )}
-                        </Button>
                     </CardContent>
                 </Card>
             </div>

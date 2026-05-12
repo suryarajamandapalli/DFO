@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// Force re-analysis after fixing imports
 import {
   Bell,
   Search,
@@ -21,12 +22,12 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
+import { cn } from './lib/utils';
+import { Button } from './components/ui/button';
+import { Separator } from './components/ui/separator';
+import { Input } from './components/ui/input';
+import { ScrollArea } from './components/ui/scroll-area';
+import { Badge } from './components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +36,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from './components/ui/dropdown-menu';
 
 import { Role, Thread, Patient, Appointment, Lead } from './types';
 import { useClinicalData } from './hooks/useClinicalData';
@@ -48,16 +49,16 @@ import { Signup } from './pages/auth/Signup';
 import { SelectRole } from './pages/onboarding/SelectRole';
 
 // --- Modularized Views ---
-import { DashboardView } from '@/components/dashboard/DashboardView';
-import { InboxView } from '@/components/dashboard/InboxView';
-import { PatientsView, PatientDetailView } from '@/components/dashboard/PatientsView';
-import { LeadsView } from '@/components/dashboard/LeadsView';
-import { ConsultationsView } from '@/components/dashboard/ConsultationsView';
-import { RiskMonitorView } from '@/components/dashboard/RiskMonitorView';
-import { ClinicalAssistant, AuditLogsView } from '@/components/dashboard/ClinicalAssistant';
-import { AppointmentsView } from '@/components/dashboard/AppointmentsView';
-import { SettingsView } from '@/components/dashboard/SettingsView';
-import { ProfileView } from '@/components/dashboard/ProfileView';
+import { DashboardView } from './components/dashboard/DashboardView';
+import { InboxView } from './components/dashboard/InboxView';
+import { PatientsView, PatientDetailView } from './components/dashboard/PatientsView';
+import { LeadsView } from './components/dashboard/LeadsView';
+import { ConsultationsView } from './components/dashboard/ConsultationsView';
+import { RiskMonitorView } from './components/dashboard/RiskMonitorView';
+import { ClinicalAssistant, AuditLogsView } from './components/dashboard/ClinicalAssistant';
+import { AppointmentsView } from './components/dashboard/AppointmentsView';
+import { SettingsView } from './components/dashboard/SettingsView';
+import { ProfileView } from './components/dashboard/ProfileView';
 
 
 
@@ -351,7 +352,7 @@ export default function App() {
                 className="flex flex-col"
               >
                 <span className="font-black text-xl tracking-tighter text-slate-900 leading-none">
-                  DFO<span className="text-sky-500">CLINIC</span>
+                  DFO | <span className="text-sky-500">Janmasethu</span>
                 </span>
                 <span className="text-[7px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1 truncate max-w-[120px]">
                   {profile?.domain || 'Clinical OS v2.0'}
@@ -450,7 +451,7 @@ export default function App() {
           <div className="flex items-center gap-4">
             <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest leading-none">Global Ops</span>
+              
             </div>
 
             <DropdownMenu>

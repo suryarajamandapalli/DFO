@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import type { AppRole } from '../../contexts/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShieldAlert, HeartPulse, Stethoscope, ArrowRight, Loader2, Building2, ChevronLeft } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 
 export function SelectRole({ onRoleAssigned }: { onRoleAssigned: () => void }) {
   const { user, profile, refreshProfile } = useAuth();
