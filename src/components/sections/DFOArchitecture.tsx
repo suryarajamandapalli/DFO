@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { User, MessageSquareText, ShieldAlert, GitMerge, FileText, ClipboardList, ArrowRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 const FlowNode = ({ icon: Icon, title, description, isActive = false, delay = 0 }: any) => (
   <motion.div 

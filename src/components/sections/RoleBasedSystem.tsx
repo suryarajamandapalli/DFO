@@ -1,6 +1,6 @@
 import { Users, Stethoscope, ShieldAlert, CheckCircle2, BrainCircuit, Activity } from 'lucide-react';
 import { motion } from 'motion/react';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 export function RoleBasedSystem() {
   const roles = [
