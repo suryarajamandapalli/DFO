@@ -40,6 +40,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './components/ui/dropdown-menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from './components/ui/popover';
 
 import { Role, Thread, Patient, Appointment, Lead } from './types';
 import { useClinicalData } from './hooks/useClinicalData';
