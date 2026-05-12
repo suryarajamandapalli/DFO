@@ -20,6 +20,9 @@ import {
   RefreshCw,
   Clock,
   UserPlus,
+  ChevronDown,
+  ChevronRight,
+  AlertTriangle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
@@ -485,10 +488,8 @@ export default function App() {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-sm animate-pulse">
-               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-sm animate-pulse">
                 <Activity className="h-4 w-4" />
               </div>
-
             </div>
 
             <Separator orientation="vertical" className="h-8" />
@@ -533,9 +534,10 @@ export default function App() {
                           {n.type === 'EMERGENCY' ? <AlertTriangle className="h-5 w-5" /> : <Bell className="h-5 w-5" />}
                         </div>
                         <div className="space-y-1">
-                          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none">{n.type}</p>
-                          <p className="text-sm font-bold text-foreground leading-tight">{n.message}</p>
-                          <p className="text-[10px] font-bold text-muted-foreground">{n.time}</p>
+                          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none">{n.level}</p>
+                          <p className="text-sm font-bold text-foreground leading-tight">{n.title}</p>
+                          <p className="text-[11px] font-medium text-muted-foreground leading-snug">{n.desc}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground pt-1">{n.time}</p>
                         </div>
                         {!n.isRead && <div className="ml-auto w-2 h-2 rounded-full bg-primary mt-1" />}
                       </div>
@@ -551,11 +553,11 @@ export default function App() {
             {/* User Profile Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 p-1.5 pr-4 rounded-2xl bg-muted/50 border border-border hover:bg-muted transition-all">
-                  <div className="h-9 w-9 rounded-xl bg-foreground flex items-center justify-center text-background text-sm font-black shadow-md">
+                <Button variant="ghost" className="h-12 flex items-center gap-3 px-3 hover:bg-muted rounded-xl transition-all border border-border bg-card shadow-sm">
+                  <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white text-xs font-black shadow-inner">
                     {profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase() || 'U'}
                   </div>
-                  <div className="hidden lg:block text-left">
+                  <div className="hidden lg:block text-left mr-1">
                     <p className="text-[11px] font-black text-foreground tracking-tight leading-none truncate max-w-[100px]">
                       {profile?.full_name || 'Clinic Admin'}
                     </p>
@@ -563,7 +565,8 @@ export default function App() {
                       {profile?.role || 'Staff'}
                     </p>
                   </div>
-                </button>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2 border border-border shadow-2xl mt-2">
                 <DropdownMenuLabel className="p-4">

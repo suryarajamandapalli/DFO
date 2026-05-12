@@ -37,6 +37,13 @@ const demoUsers = [
     full_name: 'Attending Physician',
     role: 'doctor',
     domain: 'Specialist Care'
+  },
+  {
+    email: 'DFO@gmail.com',
+    password: 'DFO123',
+    full_name: 'System Administrator',
+    role: 'cro',
+    domain: 'Main Control'
   }
 ];
 
