@@ -18,7 +18,7 @@ interface ProfileViewProps {
 
 export const ProfileView = ({ profile, user, role, onSignOut }: ProfileViewProps) => {
     return (
-        <div className="p-6 lg:p-10 max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 uppercase font-sans tracking-tight">
+        <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 uppercase font-sans tracking-tight">
             <div className="text-center md:text-left">
                 <h2 className="text-3xl font-black text-foreground tracking-tight">Clinical Identity</h2>
                 <p className="text-sm font-bold text-muted-foreground uppercase tracking-tighter mt-1">Verified clinician profile and session management</p>

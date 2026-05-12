@@ -146,7 +146,7 @@ export const InboxView = ({
                                     <ArrowLeft className="h-5 w-5" />
                                 </Button>
                                 <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center font-black text-primary-foreground shadow-lg">
-                                    {selectedThread.patientName.charAt(0)}
+                                    {selectedThread.patientName?.charAt(0) || 'P'}
                                 </div>
 
                                 <div>

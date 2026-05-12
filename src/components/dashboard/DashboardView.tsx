@@ -118,7 +118,7 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
     ];
 
     return (
-        <div className="space-y-8 p-6 lg:p-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <DashboardHeader 
                 title="Clinical Oversight" 
                 sub="" 
@@ -152,7 +152,7 @@ const CRODashboard = ({ patients, leads, appointments, consultations = [], profi
 };
 
 const DoctorDashboard = ({ threads, appointments, patients, consultations = [], profile }: { threads: Thread[], appointments: Appointment[], patients: Patient[], consultations?: Consultation[], profile: UserProfile | null }) => (
-    <div className="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <DashboardHeader 
             title="Attending Physician" 
             sub="Specialist care and emergency triage command." 
@@ -233,7 +233,7 @@ const DoctorDashboard = ({ threads, appointments, patients, consultations = [], 
 );
 
 const NurseDashboard = ({ patients, appointments, profile }: { patients: Patient[], appointments: Appointment[], profile: UserProfile | null }) => (
-    <div className="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <DashboardHeader 
             title="Triage Station" 
             sub="Patient monitoring and vitals collection hub." 
@@ -260,15 +260,15 @@ const NurseDashboard = ({ patients, appointments, profile }: { patients: Patient
                 </CardHeader>
                 <CardContent className="px-8 pb-8">
                     <div className="space-y-4">
-                        {appointments.slice(0, 5).map(app => (
-                            <div key={app.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between hover:border-primary/20 transition-all cursor-pointer">
+                        {(appointments || []).slice(0, 5).map(app => (
+                            <div key={app.id} className="p-5 rounded-2xl bg-muted/50 border border-border flex items-center justify-between hover:border-primary/20 transition-all cursor-pointer">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center font-black text-slate-400">
-                                        {app.patientName.charAt(0)}
+                                    <div className="h-10 w-10 rounded-xl bg-card border border-border flex items-center justify-center font-black text-muted-foreground">
+                                        {app.patientName?.charAt(0) || 'P'}
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-900">{app.patientName}</h4>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter mt-0.5">{app.type}</p>
+                                        <h4 className="font-bold text-foreground">{app.patientName}</h4>
+                                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter mt-0.5">{app.type}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">

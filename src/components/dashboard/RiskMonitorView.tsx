@@ -41,7 +41,7 @@ export const RiskMonitorView = ({ patients, leads = [], appointments = [], threa
         });
 
         return (
-            <div className="p-6 lg:p-10 space-y-10">
+            <div className="space-y-10">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h2 className="text-2xl font-black text-foreground tracking-tight">Operations Escalation Board</h2>
@@ -78,7 +78,7 @@ export const RiskMonitorView = ({ patients, leads = [], appointments = [], threa
                                         <div className="p-8 flex-1 flex flex-col md:flex-row md:items-center justify-between gap-6">
                                             <div className="flex items-center gap-6">
                                                 <div className="h-16 w-16 rounded-[1.5rem] bg-amber-500/10 text-amber-500 flex items-center justify-center font-black text-xl border border-amber-500/20 shadow-inner">
-                                                    {t.patientName.charAt(0)}
+                                                    {t.patientName?.charAt(0) || 'P'}
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-3 mb-1">
@@ -154,7 +154,7 @@ export const RiskMonitorView = ({ patients, leads = [], appointments = [], threa
     const sysIntegrity = patients.length > 0 ? Math.round((vitalsToday / patients.length) * 100) : 100;
 
     return (
-        <div className="p-6 lg:p-10 space-y-10">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-black text-foreground tracking-tight">Clinical Risk Monitor</h2>
@@ -191,7 +191,7 @@ export const RiskMonitorView = ({ patients, leads = [], appointments = [], threa
                                     <div className="p-8 flex-1 flex flex-col md:flex-row md:items-center justify-between gap-6">
                                         <div className="flex items-center gap-6">
                                             <div className="h-16 w-16 rounded-[1.5rem] bg-red-500/10 text-red-500 flex items-center justify-center font-black text-xl border border-red-500/20 shadow-inner">
-                                                {p.name.charAt(0)}
+                                                {p.name?.charAt(0) || 'P'}
                                             </div>
                                             <div>
                                                 <div className="flex items-center gap-3 mb-1">

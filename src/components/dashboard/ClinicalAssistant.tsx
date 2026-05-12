@@ -262,7 +262,7 @@ export const ClinicalAssistant = ({
 };
 
 export const AuditLogsView = ({ logs }: { logs: any[] }) => (
-    <div className="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <div className="flex items-center justify-between">
             <div>
                 <h2 className="text-2xl font-black text-foreground tracking-tight">System Audit Logs</h2>

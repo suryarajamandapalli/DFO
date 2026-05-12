@@ -23,7 +23,7 @@ export const SettingsView = () => {
     const [accentColor, setAccentColor] = useState('blue');
 
     return (
-        <div className="p-6 lg:p-10 max-w-5xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-black text-foreground tracking-tight italic">OS Settings</h2>

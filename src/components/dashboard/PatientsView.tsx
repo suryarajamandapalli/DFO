@@ -186,7 +186,7 @@ export const PatientDetailView = ({
     };
     return (
         <>
-        <div className="p-6 lg:p-10 space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000">
             <div className="flex items-center justify-between">
                 <Button variant="ghost" onClick={onBack} className="rounded-xl group font-black uppercase text-[10px] tracking-[0.2em] gap-2">
                     <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to Registry
