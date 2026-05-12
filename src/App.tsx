@@ -567,7 +567,7 @@ export default function App() {
               <DropdownMenuTrigger>
                 <button className="flex items-center gap-3 p-1.5 rounded-2xl hover:bg-muted transition-all border border-transparent hover:border-border group">
                   <div className="h-10 w-10 rounded-xl bg-slate-950 flex items-center justify-center text-white font-black shadow-lg shadow-slate-950/20 group-hover:scale-105 transition-transform">
-                    {profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
+                    {profile?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
                   <div className="text-left hidden xl:block pr-2">
                     <p className="text-sm font-black text-foreground leading-none">{profile?.full_name || 'System Administr...'}</p>
