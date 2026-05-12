@@ -418,7 +418,19 @@ export default function App() {
           </div>
         </ScrollArea>
 
-        <div className="p-4 border-t bg-slate-50/50">
+        <div className="p-4 border-t bg-slate-50/50 space-y-2">
+          <button
+            onClick={() => signOut()}
+            className={cn(
+              "flex items-center gap-3 w-full h-10 rounded-xl px-4 font-bold text-red-600 hover:bg-red-50 transition-all group",
+              collapsed && "justify-center px-0"
+            )}
+            title="Terminate Session"
+          >
+            <LogOut className="h-4 w-4 transition-transform group-hover:scale-110" />
+            {!collapsed && <span className="text-sm">Sign Out</span>}
+          </button>
+
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="flex items-center justify-center w-full h-10 rounded-xl bg-white border border-slate-100 hover:border-slate-300 hover:bg-slate-50 transition-all duration-300 text-slate-400 hover:text-slate-900 shadow-sm"
