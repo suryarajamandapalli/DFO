@@ -427,6 +427,11 @@ export const PatientDetailView = ({
                 <div className="flex-1 overflow-auto p-12 flex justify-center bg-muted/50 scrollbar-hide">
                     <div className="bg-card w-full max-w-[850px] shadow-2xl min-h-[1100px] p-20 flex flex-col animate-in zoom-in-95 duration-500 origin-top text-foreground">
                         {/* PDF Header */}
+                        <div className="flex justify-between border-b-4 border-slate-900 pb-12 mb-12">
+                            <div>
+                                <h1 className="text-4xl font-black tracking-tighter text-slate-900 mb-2">CLINICAL <span className="text-sky-500 uppercase">Report</span></h1>
+                                <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.4em] leading-none">DFO • Janmasethu Healthcare</p>
+                            </div>
                             <div className="text-right">
                                 <div className="bg-slate-900 text-white px-4 py-2 inline-block rounded-lg mb-4">
                                     <p className="text-[9px] font-black uppercase tracking-widest">Document ID</p>

@@ -1,0 +1,6 @@
+{
+  "name": "dfo-janmasethu",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

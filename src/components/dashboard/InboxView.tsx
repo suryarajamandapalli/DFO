@@ -149,7 +149,12 @@ export const InboxView = ({
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Button variant="outline" size="sm" className="rounded-xl font-black uppercase text-[10px] tracking-widest border-border text-primary hover:bg-primary/10">
+                                <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={() => alert(`Thread ${selectedThread.id.slice(0,8)} resolved (Simulation)`)}
+                                    className="rounded-xl font-black uppercase text-[10px] tracking-widest border-border text-primary hover:bg-primary/10"
+                                >
                                     <CheckCircle2 className="h-3.5 w-3.5 mr-2" /> Resolve Thread
                                 </Button>
 
