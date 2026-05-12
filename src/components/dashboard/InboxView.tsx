@@ -160,11 +160,11 @@ export const InboxView = ({
             </div>
 
             {/* Split Pane Area */}
-            <div className="flex-1 flex min-w-0 bg-white">
+            <div className="flex-1 flex min-w-0 min-h-0 overflow-hidden bg-white">
                 
                 {/* Thread List Pane */}
                 <div className={cn(
-                    "flex flex-col border-r border-border bg-white transition-all",
+                    "flex flex-col min-h-0 overflow-hidden border-r border-border bg-white transition-all",
                     selectedThreadId ? "hidden lg:flex lg:w-96 shrink-0" : "flex-1"
                 )}>
                     {/* List Header */}
@@ -226,7 +226,7 @@ export const InboxView = ({
 
                 {/* Message Detail Pane */}
                 <div className={cn(
-                    "flex-1 flex-col min-w-0 bg-white",
+                    "flex-1 flex-col min-w-0 min-h-0 overflow-hidden bg-white",
                     !selectedThreadId ? "hidden lg:flex items-center justify-center bg-slate-50/30" : "flex"
                 )}>
                     {!selectedThreadId ? (
