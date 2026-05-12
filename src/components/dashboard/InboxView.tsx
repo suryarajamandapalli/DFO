@@ -44,13 +44,27 @@ export const InboxView = ({
 }) => {
     const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
     const [replyText, setReplyText] = useState('');
+    const [isSending, setIsSending] = useState(false);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     const selectedThread = threads.find(t => t.id === selectedThreadId);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (selectedThreadId && replyText.trim()) {
-            sendMessage(selectedThreadId, 'doctor-1', replyText);
-            setReplyText('');
+            setIsSending(true);
+            try {
+                await sendMessage(selectedThreadId, 'doctor-1', replyText);
+                setReplyText('');
+            } finally {
+                setIsSending(false);
+            }
+        }
+    };
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            alert(`File "${file.name}" uploaded successfully (Simulation)`);
         }
     };
 
@@ -190,8 +204,18 @@ export const InboxView = ({
                         <div className="p-6 bg-card border-t border-border">
                             <div className="max-w-4xl mx-auto flex items-center gap-4 bg-muted p-2 rounded-[2rem] border border-border ring-4 ring-muted/50">
                                 <div className="flex items-center px-4 border-r border-border">
-                                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary rounded-xl">
-
+                                    <input 
+                                        type="file" 
+                                        className="hidden" 
+                                        ref={fileInputRef} 
+                                        onChange={handleFileUpload}
+                                    />
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="text-muted-foreground hover:text-primary rounded-xl"
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
                                         <Plus className="h-5 w-5" />
                                     </Button>
                                 </div>
@@ -204,9 +228,14 @@ export const InboxView = ({
                                 />
                                 <Button
                                     onClick={handleSend}
-                                    className="bg-primary hover:bg-primary/90 text-primary-foreground h-12 w-12 rounded-2xl shrink-0 shadow-lg transition-all active:scale-95"
+                                    disabled={isSending || !replyText.trim()}
+                                    className="bg-primary hover:bg-primary/90 text-primary-foreground h-12 w-12 rounded-2xl shrink-0 shadow-lg transition-all active:scale-95 flex items-center justify-center"
                                 >
-                                    <Send className="h-5 w-5" />
+                                    {isSending ? (
+                                        <RefreshCw className="h-5 w-5 animate-spin" />
+                                    ) : (
+                                        <Send className="h-5 w-5" />
+                                    )}
                                 </Button>
                             </div>
 

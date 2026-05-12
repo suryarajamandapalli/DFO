@@ -183,6 +183,7 @@ export const PatientDetailView = ({
         setShowDocument(true);
     };
     return (
+        <>
         <div className="p-6 lg:p-10 space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000">
             <div className="flex items-center justify-between">
                 <Button variant="ghost" onClick={onBack} className="rounded-xl group font-black uppercase text-[10px] tracking-[0.2em] gap-2">
@@ -384,64 +385,137 @@ export const PatientDetailView = ({
             </DialogContent>
         </Dialog>
 
-        {/* Document Preview Dialog */}
+        {/* Document Preview Dialog (PDF Viewer Style) */}
         <Dialog open={showDocument} onOpenChange={setShowDocument}>
-            <DialogContent className="max-w-3xl rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-slate-50">
-                <DialogHeader className="p-6 bg-white border-b border-slate-100 flex-row items-center justify-between space-y-0">
-                    <div className="flex items-center gap-4">
-                        <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center", selectedDoc?.color)}>
-                            {selectedDoc && <selectedDoc.icon className="h-5 w-5" />}
+            <DialogContent className="max-w-[90vw] w-[1200px] h-[90vh] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-slate-800 flex flex-col">
+                {/* Viewer Toolbar */}
+                <DialogHeader className="p-4 bg-slate-900 border-b border-white/5 flex-row items-center justify-between space-y-0 shrink-0">
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3">
+                            <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center", selectedDoc?.color)}>
+                                {selectedDoc && <selectedDoc.icon className="h-5 w-5" />}
+                            </div>
+                            <div>
+                                <DialogTitle className="text-white text-sm font-bold tracking-tight">{selectedDoc?.title}.pdf</DialogTitle>
+                                <DialogDescription className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                                    Clinical Document • {selectedDoc?.time}
+                                </DialogDescription>
+                            </div>
                         </div>
-                        <div>
-                            <DialogTitle className="text-lg font-black tracking-tight">{selectedDoc?.title}</DialogTitle>
-                            <DialogDescription className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{selectedDoc?.type} • {selectedDoc?.time}</DialogDescription>
+                        <Separator orientation="vertical" className="h-8 bg-white/10" />
+                        <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10 rounded-md">
+                                <RefreshCw className="h-4 w-4" />
+                            </Button>
+                            <span className="text-[10px] font-black text-white/40 px-3 uppercase tracking-widest border-x border-white/5">Page 1 / 1</span>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10 rounded-md">
+                                <Search className="h-4 w-4" />
+                            </Button>
                         </div>
                     </div>
-                    <Button variant="outline" className="rounded-xl font-bold uppercase text-[10px] tracking-widest border-slate-200 gap-2">
-                        <Download className="h-4 w-4" /> Download PDF
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        <Button variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest gap-2">
+                            <Download className="h-4 w-4" /> Export PDF
+                        </Button>
+                        <Button variant="ghost" onClick={() => setShowDocument(false)} className="h-10 w-10 text-white/60 hover:text-white rounded-xl p-0">
+                            <Plus className="h-6 w-6 rotate-45" />
+                        </Button>
+                    </div>
                 </DialogHeader>
-                <div className="p-10">
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-12 min-h-[400px] flex flex-col">
-                        <div className="flex justify-between border-b-2 border-slate-100 pb-8 mb-8">
+
+                {/* Viewer Canvas */}
+                <div className="flex-1 overflow-auto p-12 flex justify-center bg-slate-800/50 scrollbar-hide">
+                    <div className="bg-white w-full max-w-[850px] shadow-2xl min-h-[1100px] p-20 flex flex-col animate-in zoom-in-95 duration-500 origin-top">
+                        {/* PDF Header */}
+                        <div className="flex justify-between border-b-4 border-slate-900 pb-12 mb-12">
                             <div>
-                                <h3 className="font-black text-2xl tracking-tighter text-slate-900">DFO | <span className="text-sky-500">Janmasethu</span></h3>
-                                <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest mt-1">Clinical Oversight Division</p>
+                                <h1 className="text-4xl font-black tracking-tighter text-slate-900 mb-2">CLINICAL <span className="text-sky-500 uppercase">Report</span></h1>
+                                <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.4em] leading-none">DFO • Janmasethu Healthcare</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Document ID</p>
-                                <p className="text-xs font-black text-slate-900">REF-88392-DFO</p>
-                            </div>
-                        </div>
-                        
-                        <div className="flex-1 space-y-6">
-                            <div className="space-y-2">
-                                <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Subjective Analysis</p>
-                                <p className="text-sm text-slate-600 font-medium leading-relaxed">
-                                    Patient {patient.name} presented for a {selectedDoc?.title}. Clinical evaluation indicates stable vital signs and consistent progress within the current journey stage ({patient.journeyStage}).
-                                </p>
-                            </div>
-                            <div className="space-y-2">
-                                <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Observations</p>
-                                <ul className="text-sm text-slate-600 font-medium space-y-1 list-disc pl-4">
-                                    <li>Normal physiological response observed.</li>
-                                    <li>Uterine markers stable.</li>
-                                    <li>Patient reports no significant discomfort.</li>
-                                </ul>
+                                <div className="bg-slate-900 text-white px-4 py-2 inline-block rounded-lg mb-4">
+                                    <p className="text-[9px] font-black uppercase tracking-widest">Document ID</p>
+                                    <p className="text-xs font-mono">JS-DOC-2026-X99</p>
+                                </div>
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date: {selectedDoc?.time}</p>
                             </div>
                         </div>
 
-                        <div className="mt-12 pt-8 border-t border-slate-100 flex justify-between items-end">
-                            <div>
-                                <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Digitally Signed By</p>
-                                <p className="text-sm font-black text-slate-950 mt-1 italic">Dr. Alexander Smith</p>
-                                <p className="text-[8px] font-black uppercase text-sky-500 tracking-widest">Clinical Director, DFO</p>
+                        {/* PDF Body */}
+                        <div className="flex-1 space-y-12">
+                            <div className="grid grid-cols-2 gap-12">
+                                <div className="space-y-4">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-sky-600 border-b border-sky-100 pb-2">Patient Information</h3>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <p className="text-[8px] font-black uppercase text-slate-400">Full Name</p>
+                                            <p className="text-sm font-bold text-slate-900">{patient.name}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[8px] font-black uppercase text-slate-400">Identity UID</p>
+                                            <p className="text-sm font-bold text-slate-900">{patient.id?.slice(0, 12).toUpperCase()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-sky-600 border-b border-sky-100 pb-2">Clinical Context</h3>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <p className="text-[8px] font-black uppercase text-slate-400">Primary Diagnosis</p>
+                                            <p className="text-sm font-bold text-slate-900">Standard Gestational Monitoring</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[8px] font-black uppercase text-slate-400">Risk Assessment</p>
+                                            <p className="text-sm font-bold text-slate-900 uppercase">{patient.riskLevel} STRATIFIED</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-100 font-black uppercase text-[8px] tracking-widest px-3 py-1">Verified Clinical Record</Badge>
+
+                            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 italic text-slate-600 text-sm leading-relaxed">
+                                "Clinical findings indicate a stable progression. All vital markers are within the expected percentile for this stage. No immediate intervention required. Recommended follow-up in 14 days."
+                            </div>
+
+                            <div className="space-y-6">
+                                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-900">Detailed Observations</h3>
+                                <div className="grid grid-cols-1 gap-4">
+                                    {[
+                                        "Normal physiological markers confirmed via ultrasound.",
+                                        "Baseline blood panels show optimal hormonal balance.",
+                                        "Patient reports high compliance with prescribed supplements."
+                                    ].map((note, idx) => (
+                                        <div key={idx} className="flex gap-4 items-start">
+                                            <div className="h-5 w-5 rounded-full bg-slate-900 flex items-center justify-center shrink-0 text-white text-[10px] font-black">
+                                                {idx + 1}
+                                            </div>
+                                            <p className="text-sm text-slate-700 font-medium">{note}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* PDF Footer / Signatures */}
+                        <div className="mt-20 pt-12 border-t-2 border-slate-100 flex justify-between items-end">
+                            <div>
+                                <div className="h-16 w-48 bg-slate-50 rounded-xl mb-4 border border-dashed border-slate-200 flex items-center justify-center">
+                                    <span className="text-slate-300 font-serif italic text-2xl">A. Smith</span>
+                                </div>
+                                <p className="text-sm font-black text-slate-950">Dr. Alexander Smith</p>
+                                <p className="text-[8px] font-black uppercase text-sky-500 tracking-[0.2em] mt-1">Senior Clinical Lead, DFO</p>
+                            </div>
+                            <div className="text-right">
+                                <div className="inline-flex items-center gap-3 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100 mb-4">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Verified Record</span>
+                                </div>
+                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Signed on {new Date().toLocaleDateString()}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </DialogContent>
         </Dialog>
+        </>
     );
 };
