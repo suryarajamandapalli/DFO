@@ -45,12 +45,22 @@ export const LeadsView = ({ leads, onConvert }: LeadsViewProps) => {
 
     const handleConvert = async (lead: Lead) => {
         setIsConverting(true);
-        const result = await onConvert(lead);
-        setIsConverting(false);
-        if (result.success) {
-            setSelectedLead(null);
-        } else {
-            alert("Conversion failed: " + result.error);
+        try {
+            const result = await onConvert(lead);
+            setIsConverting(false);
+            if (result.success) {
+                setSelectedLead(null);
+            } else {
+                alert("Conversion failed: " + result.error);
+            }
+        } catch (err: any) {
+            setIsConverting(false);
+            console.error('Conversion error:', err.message);
+            let userMessage = err.message;
+            if (err.message.includes('unique_constraint') || err.message.includes('duplicate key')) {
+                userMessage = "This patient is already registered (phone number already exists).";
+            }
+            alert("Conversion failed: " + userMessage);
         }
     };
 
@@ -232,12 +242,24 @@ export const LeadsView = ({ leads, onConvert }: LeadsViewProps) => {
                             </CardContent>
                         </Card>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center p-12 text-center rounded-[3rem] border-4 border-dashed border-border/50">
-                            <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center mb-6">
-                                <UserPlus className="h-10 w-10 text-muted-foreground/30" />
+                        <div className="h-full flex flex-col items-center justify-center p-12 text-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-slate-50/50">
+                            <div className="relative mb-8">
+                                <div className="h-24 w-24 rounded-[2.5rem] bg-white shadow-xl flex items-center justify-center border border-slate-100">
+                                    <UserPlus className="h-10 w-10 text-primary" />
+                                </div>
+                                <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-2xl bg-sky-500 shadow-lg flex items-center justify-center text-white ring-4 ring-white">
+                                    <ArrowRight className="h-5 w-5" />
+                                </div>
                             </div>
-                            <h3 className="text-lg font-black text-muted-foreground">Select a lead</h3>
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-tighter mt-1">to view details and convert</p>
+                            <h3 className="text-xl font-black text-slate-900 tracking-tight">Select a Lead</h3>
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mt-3 leading-relaxed max-w-[200px]">
+                                Choose a prospective patient from the list to initiate the clinical conversion workflow.
+                            </p>
+                            <div className="mt-8 flex gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                            </div>
                         </div>
 
                     )}

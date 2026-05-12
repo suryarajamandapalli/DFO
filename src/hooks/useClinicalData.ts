@@ -67,7 +67,11 @@ export function useClinicalData() {
             return { success: true };
         } catch (err: any) {
             console.error('Conversion error:', err.message);
-            return { success: false, error: err.message };
+            let userMessage = err.message;
+            if (err.message.includes('unique_constraint') || err.message.includes('duplicate key')) {
+                userMessage = "Patient with this phone number is already registered in the system.";
+            }
+            return { success: false, error: userMessage };
         }
     };
 
