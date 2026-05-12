@@ -152,7 +152,7 @@ export function useClinicalData() {
                 id: m.id,
                 senderId: m.sender_id,
                 senderName: m.sender_type,
-                senderType: m.sender_type.toUpperCase() as any,
+                senderType: m.sender_type?.toUpperCase() as any || 'UNKNOWN',
                 content: m.content,
                 timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }));
@@ -225,7 +225,7 @@ export function useClinicalData() {
                 name: l.name,
                 phone: l.phone,
                 source: l.source || 'Direct',
-                status: l.status.toUpperCase() as any,
+                status: l.status?.toUpperCase() as any || 'UNKNOWN',
                 createdAt: l.created_at
             }));
             setLeads(mapped);
