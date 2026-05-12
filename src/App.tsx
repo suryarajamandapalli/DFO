@@ -614,24 +614,6 @@ export default function App() {
         </header>
 
         <main className="flex-1 flex flex-col min-w-0 bg-background overflow-hidden pt-16 lg:pt-0">
-          <ScrollArea className="flex-1 h-full">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="min-h-full p-4 lg:p-8 max-w-[1600px] mx-auto"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                      <p className="text-sm font-bold text-muted-foreground animate-pulse">Syncing with Clinical Cloud...</p>
-                    </div>
-                  </div>
-                ) : renderContent()}
               </motion.div>
             </AnimatePresence>
           </ScrollArea>
