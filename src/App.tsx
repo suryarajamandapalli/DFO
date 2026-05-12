@@ -627,7 +627,7 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="flex-1 overflow-auto p-4 md:p-10"
+              className="flex-1 flex flex-col min-h-0 overflow-auto p-4 md:p-10"
             >
               {loading ? (
                 <div className="flex items-center justify-center h-[calc(100vh-200px)]">

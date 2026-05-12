@@ -111,7 +111,7 @@ export const InboxView = ({
     );
 
     return (
-        <div className="flex h-[calc(100vh-140px)] lg:h-[calc(100vh-80px)] overflow-hidden bg-white rounded-[2rem] border border-border shadow-2xl mx-4 my-2">
+        <div className="flex h-full min-h-0 overflow-hidden bg-white rounded-[2rem] border border-border shadow-2xl">
             {/* Folder Sidebar (Gmail Style) */}
             <div className="w-64 border-r border-border bg-slate-50/50 hidden lg:flex flex-col p-4">
                 <Button className="w-full h-14 rounded-2xl bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 shadow-sm font-black uppercase text-xs tracking-widest mb-6 gap-3">
