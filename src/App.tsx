@@ -132,6 +132,8 @@ export default function App() {
     { id: '3', title: 'SLA Warning', desc: 'Case #8902 is approaching response deadline.', type: 'EMERGENCY', level: 'High', time: '1h ago', isRead: false },
   ]);
 
+  const [activePopover, setActivePopover] = useState<string | null>(null);
+
   // --- Theme & Persistence ---
   useEffect(() => {
     const savedTheme = localStorage.getItem('dfo-theme') || 'light';
@@ -553,66 +555,64 @@ export default function App() {
                   <button className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">View All Activities</button>
                 </div>
               </DropdownMenuContent>
-            </DropdownMenu>
 
-            {/* User Profile Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-12 flex items-center gap-3 px-3 hover:bg-muted rounded-xl transition-all border border-border bg-card shadow-sm">
-                  <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white text-xs font-black shadow-inner">
-                    {profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase() || 'U'}
+                  <div className="p-6 bg-slate-50 border-t border-slate-100">
+                    <button className="w-full h-12 rounded-2xl bg-white border border-slate-200 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:text-slate-900 hover:border-slate-300 transition-all">
+                      View all activities
+                    </button>
                   </div>
-                  <div className="hidden lg:block text-left mr-1">
-                    <p className="text-[11px] font-black text-foreground tracking-tight leading-none truncate max-w-[100px]">
-                      {profile?.full_name || 'Clinic Admin'}
-                    </p>
-                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-1">
-                      {profile?.role || 'Staff'}
-                    </p>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Separator orientation="vertical" className="h-8 mx-2" />
+
+            {/* User Dropdown */}
+            <DropdownMenu open={activePopover === 'profile'} onOpenChange={(open) => setActivePopover(open ? 'profile' : null)}>
+              <DropdownMenuTrigger>
+                <button className="flex items-center gap-3 p-1.5 rounded-2xl hover:bg-muted transition-all border border-transparent hover:border-border group">
+                  <div className="h-10 w-10 rounded-xl bg-slate-950 flex items-center justify-center text-white font-black shadow-lg shadow-slate-950/20 group-hover:scale-105 transition-transform">
+                    {profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
                   </div>
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-                </Button>
+                  <div className="text-left hidden xl:block pr-2">
+                    <p className="text-sm font-black text-foreground leading-none">{profile?.full_name || 'System Administr...'}</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">{role}</p>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2 border border-border shadow-2xl mt-2">
-                <DropdownMenuLabel className="p-4">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-xs font-black uppercase text-muted-foreground tracking-widest leading-none">Identified As</p>
-                    <p className="text-sm font-bold text-foreground truncate">{user?.email}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+              <DropdownMenuContent className="w-72 mt-4" align="right">
+                <div className="p-4 border-b border-slate-50 mb-1 bg-slate-50/30">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Identified as</p>
+                  <p className="text-sm font-black text-slate-900 truncate tracking-tight">{user?.email}</p>
+                </div>
+                
                 <DropdownMenuGroup>
                   <DropdownMenuItem 
-                    onClick={() => {
-                      setActiveTab('Profile');
-                      setMobileMenuOpen(false);
-                    }}
-                    className="rounded-xl h-11 px-4 font-bold text-slate-600 focus:bg-primary focus:text-primary-foreground gap-3 cursor-pointer"
+                    onClick={() => { setActivePopover(null); setActiveTab('Profile'); }}
+                    className="rounded-xl h-12 px-4 font-black text-slate-600 hover:bg-primary/5 hover:text-primary gap-3 cursor-pointer"
                   >
                     <User className="h-4 w-4" /> 
                     <span className="text-sm">Professional Profile</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => {
-                      setActiveTab('Settings');
-                      setMobileMenuOpen(false);
-                    }}
-                    className="rounded-xl h-11 px-4 font-bold text-slate-600 focus:bg-primary focus:text-primary-foreground gap-3 cursor-pointer"
+                    onClick={() => { setActivePopover(null); setActiveTab('Settings'); }}
+                    className="rounded-xl h-12 px-4 font-black text-slate-600 hover:bg-primary/5 hover:text-primary gap-3 cursor-pointer"
                   >
                     <Settings className="h-4 w-4" /> 
                     <span className="text-sm">OS Settings</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
+
                 <DropdownMenuSeparator />
+                
                 <DropdownMenuItem 
                   onClick={() => signOut()}
-                  className="text-red-600 rounded-lg py-2.5 cursor-pointer hover:bg-red-50"
+                  className="text-red-600 rounded-xl h-12 px-4 font-black hover:bg-red-50 gap-3 cursor-pointer mt-1"
                 >
-                  <LogOut className="mr-3 h-4 w-4" /> 
-                  <span className="font-bold text-sm">Terminate Session</span>
+                  <LogOut className="h-4 w-4" /> 
+                  <span className="text-sm">Terminate Session</span>
                 </DropdownMenuItem>
-
-
               </DropdownMenuContent>
             </DropdownMenu>
 
